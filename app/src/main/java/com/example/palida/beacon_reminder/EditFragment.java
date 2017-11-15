@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 
 /**
@@ -23,7 +24,8 @@ import java.util.Date;
  */
 public class EditFragment extends Fragment {
     private View rootView;
-    int pos;
+//    int pos;
+    String id;
     public int itemSelected=5;
     public static int[] picS = {R.drawable.key,R.drawable.medicine,R.drawable.umbrella,R.drawable.clothes,R.drawable.money,R.drawable.question};
 
@@ -39,16 +41,24 @@ public class EditFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_edit, container, false);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            pos = bundle.getInt("pos");
+//            pos = bundle.getInt("pos");
+            id = bundle.getString(Item.Column.ID);
+
         }
+
+        final DBHelper dbHelper = new DBHelper(getActivity());
+        final HashMap queryItem = dbHelper.getBeacon(id);
+
         TextView titleName = (TextView) getActivity().findViewById(R.id.toolbar_title);
         titleName.setText("");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("cancel");
+        edit.setVisibility(View.VISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
-        search.setBackgroundColor(Color.TRANSPARENT);
+        search.setVisibility(View.INVISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("save");
+        save.setVisibility(View.VISIBLE);
 
         ImageView key = (ImageView) rootView.findViewById(R.id.key);
         ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
@@ -57,21 +67,21 @@ public class EditFragment extends Fragment {
         ImageView money = (ImageView) rootView.findViewById(R.id.money);
         ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
 
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[0]) key.setBackgroundResource(R.drawable.black);;
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[1]) medicine.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[2]) umbrella.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[3]) cloth.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[4]) money.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[5]) question.setBackgroundResource(R.drawable.black);
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[0]) key.setBackgroundResource(R.drawable.black);;
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[1]) medicine.setBackgroundResource(R.drawable.black);
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[2]) umbrella.setBackgroundResource(R.drawable.black);
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[3]) cloth.setBackgroundResource(R.drawable.black);
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[4]) money.setBackgroundResource(R.drawable.black);
+        if((Integer)queryItem.get(Item.Column.PIC) ==WithInAddFragment.picS[5]) question.setBackgroundResource(R.drawable.black);
 
         final EditText editName  = (EditText) rootView.findViewById(R.id.name);
         final EditText editDes  = (EditText) rootView.findViewById(R.id.des);
-        editName.setText(ListFragment.name.get(pos));
-        editDes.setText(ListFragment.description.get(pos));
+        editName.setText((CharSequence) queryItem.get(Item.Column.NAME));
+        editDes.setText((CharSequence) queryItem.get(Item.Column.DESCRIPTION));
         Date currentTime = Calendar.getInstance().getTime();
         final String date = currentTime.getDate() +"/" + currentTime.getMonth() + "/2017";
 
-        getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
+        save.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
 
                 Toast.makeText(getActivity(), "Edit item complete",
@@ -79,14 +89,16 @@ public class EditFragment extends Fragment {
 
                 String editN = editName.getText().toString();
                 String editD = editDes.getText().toString();
-                ListFragment.name.set(pos, editN);
-                ListFragment.description.set(pos,editD);
-                ListFragment.pic.set(pos,picS[itemSelected]);
+//                ListFragment.name.set(pos, editN);
+//                ListFragment.description.set(pos,editD);
+//                ListFragment.pic.set(pos,picS[itemSelected]);
+                Item item = new Item((String) queryItem.get(Item.Column.ID), editN, picS[itemSelected],editD,(String)queryItem.get(Item.Column.INSTALL));
+                dbHelper.updateBeacon(item);
                 getFragmentManager().popBackStack();
             }
         });
 
-        getActivity().findViewById(R.id.edit).setOnClickListener(new View.OnClickListener(){
+        edit.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 getFragmentManager().popBackStack();
             }

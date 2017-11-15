@@ -13,13 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class WithInListFragment extends Fragment {
     private View rootView;
-    int pos;
+//    int pos;
+    String id;
 
     public WithInListFragment() {
         // Required empty public constructor
@@ -33,43 +36,52 @@ public class WithInListFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_with_in_list, container, false);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            pos = bundle.getInt("posL");
+//            pos = bundle.getInt("posL");
+            id = bundle.getString(Item.Column.ID);
         }
+
+        final DBHelper dbHelper = new DBHelper(getActivity());
+        final HashMap queryItem = dbHelper.getBeacon(id);
+
         TextView titleName = (TextView) getActivity().findViewById(R.id.toolbar_title);
         titleName.setText("");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("edit");
-        Button search = (Button) getActivity().findViewById(R.id.search);
-        search.setBackgroundResource(R.drawable.bin);
+        edit.setVisibility(View.VISIBLE);
+        Button btn_delete = (Button) getActivity().findViewById(R.id.search);
+        btn_delete.setBackgroundResource(R.drawable.ic_delete_black_24dp);
+        btn_delete.setVisibility(View.VISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
+        save.setVisibility(View.INVISIBLE);
+
+
 
         ImageView pic = (ImageView) rootView.findViewById(R.id.pic);
-        pic.setBackgroundResource(ListFragment.pic.get(pos));
+        pic.setBackgroundResource((Integer) queryItem.get(Item.Column.PIC));
         TextView name = (TextView) rootView.findViewById(R.id.name);
-        name.setText("Name: " + ListFragment.name.get(pos));
+        name.setText("Name: " + queryItem.get(Item.Column.NAME));
         TextView des = (TextView) rootView.findViewById(R.id.description);
-        des.setText("Description: "+ListFragment.description.get(pos));
+        des.setText("Description: "+queryItem.get(Item.Column.DESCRIPTION));
         TextView install = (TextView) rootView.findViewById(R.id.install_on);
-        install.setText("Install on: "+ListFragment.install.get(pos));
+        install.setText("Install on: "+queryItem.get(Item.Column.INSTALL));
 
 
-        getActivity().findViewById(R.id.search).setOnClickListener(new View.OnClickListener(){
+        btn_delete.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                ListFragment.name.remove(pos);
-                ListFragment.pic.remove(pos);
+                dbHelper.deleteBeacon((String) queryItem.get(Item.Column.ID));
                 Toast.makeText(getActivity(), "Delete item complete",
                         Toast.LENGTH_LONG).show();
                 getFragmentManager().popBackStack();
             }
         });
 
-        getActivity().findViewById(R.id.edit).setOnClickListener(new View.OnClickListener(){
+        edit.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 EditFragment select1 = new EditFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt("pos", pos);
+                bundle.putString(Item.Column.ID, (String) queryItem.get(Item.Column.ID));
                 select1.setArguments(bundle);
                 transaction.replace(R.id.frame, select1);
                 transaction.addToBackStack(null);

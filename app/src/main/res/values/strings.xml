@@ -7,4 +7,33 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="name">List</string>
+
+    <string name="dialog_error_need_location_access">This app needs location access</string>
+    <string name="error_message_location_access_need_tobe_granted">Please grant location access so
+        this app can detect beacons in the background.
+    </string>
+    <string name="dialog_error_ble_not_enabled">Bluetooth not enabled</string>
+    <string name="error_message_please_enable_bluetooth">Please enable bluetooth in settings and
+        restart this application.
+    </string>
+    <string name="dialog_error_ble_not_supported">Bluetooth LE not available</string>
+    <string name="error_message_bluetooth_le_not_supported">Sorry, this device does not support
+        Bluetooth LE.
+    </string>
+
+    <string name="dialog_action_ok">OK</string>
+    <!-- Bluetooth -->
+    <string name="bluetooth_not_enabled">Bluetooth not enabled</string>
+    <string name="please_enable_bluetooth">Please enable bluetooth in settings and restart the app
+        to work properly.
+    </string>
+    <string name="dialog_error_functionality_limited">Functionality limited</string>
+    <string name="error_message_location_access_not_granted">\"Since location access has not been
+        granted, this app will not be able to discover beacons when in the background.
+    </string>
+    <string name="settings">Settings</string>
+
+    <!-- List item strings -->
+    <string name="list_item_distance">Distance: %1$sm</string>
+    <string name="list_item_major_minor">Maj, Min: %1$s.%2$s</string>
 </resources>

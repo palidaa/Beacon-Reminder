@@ -34,10 +34,13 @@ public class AlarmFragment extends Fragment {
         titleName.setText("Alarm");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("");
+        edit.setVisibility(View.INVISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
-        search.setBackgroundResource(R.drawable.search);
+        search.setBackgroundResource(R.drawable.ic_search_black_24dp);
+        search.setVisibility(View.INVISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
+        save.setVisibility(View.INVISIBLE);
 
         ListView listView = rootView.findViewById(R.id.listView);
         final CustomAdapterAlarm adapter =new CustomAdapterAlarm(getActivity(), ListFragment.name,ListFragment.pic,ListFragment.checked);

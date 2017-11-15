@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import java.util.Date;
  */
 public class WithInAddFragment extends Fragment {
     private View rootView;
+    String beacon_id;
+// beacon_name;
     int pos;
     public int itemSelected=5;
     public static int[] picS = {R.drawable.key,R.drawable.medicine,R.drawable.umbrella,R.drawable.clothes,R.drawable.money,R.drawable.question};
@@ -40,18 +43,23 @@ public class WithInAddFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             pos = bundle.getInt("pos");
+            beacon_id = bundle.getString(Item.Column.ID);
+//            beacon_name = bundle.getString(Item.Column.NAME);
         }
         TextView titleName = (TextView) getActivity().findViewById(R.id.toolbar_title);
         titleName.setText("");
-        TextView edit = (TextView) getActivity().findViewById(R.id.edit);
+        final TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("cancel");
+        edit.setVisibility(View.VISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
-        search.setBackgroundColor(Color.TRANSPARENT);
+        search.setVisibility(View.INVISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("save");
+        save.setVisibility(View.VISIBLE);
 
         final EditText editName  = (EditText) rootView.findViewById(R.id.name);
         final EditText editDes  = (EditText) rootView.findViewById(R.id.des);
+//        editName.setText(beacon_name.equalsIgnoreCase("unknown")?"":beacon_name);
         editName.setText("");
         editDes.setText("");
         Date currentTime = Calendar.getInstance().getTime();
@@ -64,12 +72,17 @@ public class WithInAddFragment extends Fragment {
 
                 String editN = editName.getText().toString();
                 String editD = editDes.getText().toString();
-                ListFragment.name.add(editN);
-                ListFragment.description.add(editD);
-                ListFragment.install.add(date);
-                ListFragment.pic.add(picS[itemSelected]);
+//                ListFragment.name.add(editN);
+//                ListFragment.description.add(editD);
+//                ListFragment.install.add(date);
+//                ListFragment.pic.add(picS[itemSelected]);
 //                something about keyyyyyyy vvvvvv
-                ListFragment.key.add(AddFragment.name.get(pos));
+//                ListFragment.key.add(AddFragment.name.get(pos));
+                DBHelper dbHelper = new DBHelper(getActivity());
+                Item itemBeacon = new Item(beacon_id, editN, picS[itemSelected], editD, date);
+                dbHelper.addNewBeacon(itemBeacon);
+                Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
+
                 getFragmentManager().popBackStack();
             }
         });

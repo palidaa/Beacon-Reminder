@@ -29,6 +29,9 @@ public class ListFragment extends Fragment {
     public static List<String> key = new ArrayList<String>();
     public static List<Boolean> checked = new ArrayList<Boolean>();
 
+
+    public static List<Item> items = new ArrayList<Item>();
+
     private View rootView;
 
     public static ListFragment newInstance() {
@@ -49,34 +52,18 @@ public class ListFragment extends Fragment {
         titleName.setText("List");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("");
+        edit.setVisibility(View.INVISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
-        search.setBackgroundResource(R.drawable.search);
+        search.setBackgroundResource(R.drawable.ic_search_black_24dp);
+        search.setVisibility(View.INVISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
+        save.setVisibility(View.INVISIBLE);
 
-
-        if(name.isEmpty()) {
-            name.add("Key");
-            name.add("Medicine");
-            name.add("Umbrella");
-            pic.add(R.drawable.key);
-            pic.add(R.drawable.medicine);
-            pic.add(R.drawable.umbrella);
-            description.add("this is key");
-            description.add("this is medicine");
-            description.add("this is umbrella");
-            install.add("");
-            install.add("");
-            install.add("");
-            key.add("");
-            key.add("");
-            key.add("");
-            checked.add(false);
-            checked.add(false);
-            checked.add(false);
-        }
         ListView listView = rootView.findViewById(R.id.listView);
-        final CustomAdapter adapter =new CustomAdapter(getActivity(), name,pic);
+        DBHelper dbHelper = new DBHelper(getActivity());
+        items = dbHelper.getAllBeacons();
+        final CustomAdapter adapter =new CustomAdapter(getActivity(), items);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,8 +75,10 @@ public class ListFragment extends Fragment {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             WithInListFragment select1 = new WithInListFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt("posL", arg2);
+            bundle.putString(Item.Column.ID, items.get(arg2).getBeacon_uuid());
             select1.setArguments(bundle);
+
+            items.clear();
             transaction.replace(R.id.frame, select1);
             transaction.addToBackStack(null);
             transaction.commit();

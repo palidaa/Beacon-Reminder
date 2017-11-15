@@ -12,6 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.palida.beacon_reminder.altBeacon.BeaconAdapter;
+
+import org.altbeacon.beacon.Beacon;
 
 import java.util.List;
 
@@ -81,4 +86,5 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
 }
