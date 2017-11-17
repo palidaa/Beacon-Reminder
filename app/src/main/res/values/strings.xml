@@ -7,4 +7,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="name">List</string>
+    <string name="bluetooth_not_enabled">Bluetooth not enabled</string>
+    <string name="please_enable_bluetooth">Please enable bluetooth in settings and restart the app
+        to work properly.
+    </string>
+    <string name="settings">Settings</string>
 </resources>

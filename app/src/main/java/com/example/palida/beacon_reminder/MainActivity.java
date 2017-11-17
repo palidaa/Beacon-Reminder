@@ -3,7 +3,9 @@ package com.example.palida.beacon_reminder;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -13,11 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static int i=0,j=0,l=0;
     private BottomNavigationView navigation;
+    public static BeaconManager beaconManager;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -32,10 +39,15 @@ public class MainActivity extends AppCompatActivity {
                     transaction.commit();
                     return true;
                 case R.id.navigation_add:
-                    AddFragment select2 = new AddFragment();
-                    transaction.replace(R.id.frame, select2);
-                    transaction.commit();
-                    return true;
+                    if (!beaconManager.checkAvailability()) {
+                        requestBluetooth();
+                    } else {
+                        AddFragment select2 = new AddFragment();
+                        transaction.replace(R.id.frame, select2);
+                        transaction.commit();
+                        return true;
+                    }
+                    return false;
                 case R.id.navigation_clock:
                     AlarmFragment select3 = new AlarmFragment();
                     transaction.replace(R.id.frame, select3);
@@ -46,11 +58,27 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void requestBluetooth() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.bluetooth_not_enabled))
+                .setMessage(getString(R.string.please_enable_bluetooth))
+                .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Initializing intent to go to bluetooth settings.
+                        Intent bltSettingsIntent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                        startActivity(bltSettingsIntent);
+                    }
+                })
+                .show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        beaconManager = BeaconManager.getInstanceForApplication(this);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
