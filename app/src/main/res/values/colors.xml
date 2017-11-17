@@ -9,4 +9,6 @@
     <color name="two">#ececec</color>
     <color name="bg">#ffffff</color>
     <color name="text">#b47ddc</color>
+    <color name="bg_alarm">#818181</color>
+
 </resources>

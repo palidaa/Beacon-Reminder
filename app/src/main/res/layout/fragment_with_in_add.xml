@@ -93,12 +93,12 @@
                     android:src="@drawable/clothes" />
 
                 <ImageView
-                    android:id="@+id/money"
+                    android:id="@+id/door"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    android:src="@drawable/money" />
+                    android:src="@drawable/door" />
 
                 <ImageView
                     android:id="@+id/question"

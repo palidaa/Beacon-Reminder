@@ -40,7 +40,8 @@ public class AlarmFragment extends Fragment {
         save.setText("");
 
         ListView listView = rootView.findViewById(R.id.listView);
-        final CustomAdapterAlarm adapter =new CustomAdapterAlarm(getActivity(), ListFragment.name,ListFragment.pic,ListFragment.checked);
+        final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.name,ListFragment.pic,ListFragment.checked);
+//        final CustomAdapter adapter =new CustomAdapter(getActivity(), ListFragment.name,ListFragment.pic);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -48,16 +49,15 @@ public class AlarmFragment extends Fragment {
 
             MainActivity.l=2;
             MainActivity.i=2;
-            Switch s = (Switch) rootView.findViewById(R.id.switch1);
 
-//            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//            WithInListFragment select1 = new WithInListFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putInt("posL", arg2);
-//            select1.setArguments(bundle);
-//            transaction.replace(R.id.frame, select1);
-//            transaction.addToBackStack(null);
-//            transaction.commit();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            WithInAlarmFragment select1 = new WithInAlarmFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("pos", arg2);
+            select1.setArguments(bundle);
+            transaction.replace(R.id.frame, select1);
+            transaction.addToBackStack(null);
+            transaction.commit();
             }
         });
 

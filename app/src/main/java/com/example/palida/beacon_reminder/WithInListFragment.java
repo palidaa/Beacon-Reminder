@@ -51,7 +51,7 @@ public class WithInListFragment extends Fragment {
         TextView des = (TextView) rootView.findViewById(R.id.description);
         des.setText("Description: "+ListFragment.description.get(pos));
         TextView install = (TextView) rootView.findViewById(R.id.install_on);
-        install.setText("Install on: "+ListFragment.install.get(pos));
+        install.setText("Install on: "+ ListFragment.install.get(pos));
 
 
         getActivity().findViewById(R.id.search).setOnClickListener(new View.OnClickListener(){

@@ -28,6 +28,11 @@ public class ListFragment extends Fragment {
     public static List<String> install = new ArrayList<String>();
     public static List<String> key = new ArrayList<String>();
     public static List<Boolean> checked = new ArrayList<Boolean>();
+    public static List<String> start_time = new ArrayList<String>();
+    public static List<String> end_time = new ArrayList<String>();
+    public static List<String> repeat = new ArrayList<String>();
+    public static List<String> label = new ArrayList<String>();
+    public static List<Boolean> snooze = new ArrayList<Boolean>();
 
     private View rootView;
 
@@ -74,6 +79,21 @@ public class ListFragment extends Fragment {
             checked.add(false);
             checked.add(false);
             checked.add(false);
+            start_time.add("");
+            start_time.add("");
+            start_time.add("");
+            end_time.add("");
+            end_time.add("");
+            end_time.add("");
+            repeat.add("");
+            repeat.add("");
+            repeat.add("");
+            label.add("");
+            label.add("");
+            label.add("");
+            snooze.add(false);
+            snooze.add(false);
+            snooze.add(false);
         }
         ListView listView = rootView.findViewById(R.id.listView);
         final CustomAdapter adapter =new CustomAdapter(getActivity(), name,pic);
