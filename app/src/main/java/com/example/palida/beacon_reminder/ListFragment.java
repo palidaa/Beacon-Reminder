@@ -85,12 +85,12 @@ public class ListFragment extends Fragment {
             end_time.add("");
             end_time.add("");
             end_time.add("");
-            repeat.add("");
-            repeat.add("");
-            repeat.add("");
-            label.add("");
-            label.add("");
-            label.add("");
+            repeat.add("Never");
+            repeat.add("Never");
+            repeat.add("Never");
+            label.add("Alarm");
+            label.add("Alarm");
+            label.add("Alarm");
             snooze.add(false);
             snooze.add(false);
             snooze.add(false);

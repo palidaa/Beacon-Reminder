@@ -19,7 +19,7 @@ public class RepeatFragment extends Fragment {
     private View rootView;
     int pos;
     int itemSelected = 0;
-    String []day= {"","Every Sunday","Every Monday","Every Tuesday","Every Wednesday","Every Thursday","Every Friday","Every Saturday"};
+    String []day= {"Never","Every Sunday","Every Monday","Every Tuesday","Every Wednesday","Every Thursday","Every Friday","Every Saturday"};
 
     public RepeatFragment() {
         // Required empty public constructor
@@ -53,9 +53,7 @@ public class RepeatFragment extends Fragment {
 
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                ListFragment.repeat.set(pos,day[itemSelected]);
-//                TextView repeat = (TextView) rootView.findViewById(R.id.repeat);
-//                repeat.setText(ListFragment.repeat.get(pos));
+                WithInAlarmFragment.repeat1.set(pos,day[itemSelected]);
                 getFragmentManager().popBackStack();
             }
         });
