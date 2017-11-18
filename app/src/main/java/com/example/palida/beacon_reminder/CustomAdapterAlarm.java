@@ -41,7 +41,7 @@ public class CustomAdapterAlarm extends BaseAdapter{
         return 0;
     }
 
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
         LayoutInflater mInflater =
                 (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -57,7 +57,12 @@ public class CustomAdapterAlarm extends BaseAdapter{
         Switch s = (Switch) view.findViewById(R.id.switch1);
         s.setChecked(checked.get(position));
 
-        ListFragment.checked.set(position,s.isChecked());
+        s.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListFragment.checked.set(position,!checked.get(position));
+            }
+        });
 
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout);
         if(position%2==1)

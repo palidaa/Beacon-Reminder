@@ -28,8 +28,8 @@ public class WithInAddFragment extends Fragment {
 // beacon_name;
     int pos;
     public int itemSelected=5;
-    public static int[] picS = {R.drawable.key,R.drawable.medicine,R.drawable.umbrella,R.drawable.clothes,R.drawable.money,R.drawable.question};
-    public static String[] nameS = {"key","medicine","umbrella","clothes","money","question"};
+    public static int[] picS = {R.drawable.key,R.drawable.medicine,R.drawable.umbrella,R.drawable.clothes,R.drawable.money,R.drawable.door,R.drawable.question};
+    public static String[] nameS = {"key","medicine","umbrella","clothes","money","door","question"};
     public WithInAddFragment() {
         // Required empty public constructor
     }
@@ -63,7 +63,7 @@ public class WithInAddFragment extends Fragment {
         editName.setText("");
         editDes.setText("");
         Date currentTime = Calendar.getInstance().getTime();
-        final String date = currentTime.getDate() +"/" + currentTime.getMonth() + "/2017";
+        final String date = "Date : "+currentTime.getDate() +"/" + currentTime.getMonth() + "/2017";
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
 
@@ -72,10 +72,19 @@ public class WithInAddFragment extends Fragment {
 
                 String editN = editName.getText().toString();
                 String editD = editDes.getText().toString();
-//                ListFragment.name.add(editN);
-//                ListFragment.description.add(editD);
-//                ListFragment.install.add(date);
-//                ListFragment.pic.add(picS[itemSelected]);
+
+                ListFragment.name.add(editN);
+                ListFragment.description.add(editD);
+                ListFragment.install.add(date);
+                ListFragment.pic.add(picS[itemSelected]);
+                ListFragment.checked.add(false);
+                ListFragment.start_time.add("");
+                ListFragment.end_time.add("");
+                ListFragment.repeat.add("");
+                ListFragment.label.add("Alarm");
+                ListFragment.snooze.add(false);
+
+
 //                something about keyyyyyyy vvvvvv
 //                ListFragment.key.add(AddFragment.name.get(pos));
                 DBHelper dbHelper = new DBHelper(getActivity());
@@ -100,13 +109,15 @@ public class WithInAddFragment extends Fragment {
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(0);
                 key.setBackgroundResource(R.drawable.black);
                 umbrella.setBackgroundResource(0);
                 question.setBackgroundResource(0);
                 cloth.setBackgroundResource(0);
-                money.setBackgroundResource(0);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
                 itemSelected=0;
             }
@@ -117,13 +128,15 @@ public class WithInAddFragment extends Fragment {
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(0);
                 key.setBackgroundResource(0);
                 umbrella.setBackgroundResource(0);
                 question.setBackgroundResource(0);
                 cloth.setBackgroundResource(0);
-                money.setBackgroundResource(0);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(R.drawable.black);
                 itemSelected=1;
             }
@@ -134,13 +147,15 @@ public class WithInAddFragment extends Fragment {
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(0);
                 key.setBackgroundResource(0);
                 umbrella.setBackgroundResource(R.drawable.black);
                 question.setBackgroundResource(0);
                 cloth.setBackgroundResource(0);
-                money.setBackgroundResource(0);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
                 itemSelected=2;
             }
@@ -151,13 +166,15 @@ public class WithInAddFragment extends Fragment {
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(0);
                 key.setBackgroundResource(0);
                 umbrella.setBackgroundResource(0);
                 question.setBackgroundResource(R.drawable.black);
                 cloth.setBackgroundResource(0);
-                money.setBackgroundResource(0);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
                 itemSelected=5;
             }
@@ -168,32 +185,55 @@ public class WithInAddFragment extends Fragment {
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(0);
                 key.setBackgroundResource(0);
                 umbrella.setBackgroundResource(0);
                 question.setBackgroundResource(0);
                 cloth.setBackgroundResource(R.drawable.black);
-                money.setBackgroundResource(0);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
                 itemSelected=3;
             }
         });
-        rootView.findViewById(R.id.money).setOnClickListener(new View.OnClickListener(){
+//        rootView.findViewById(R.id.money).setOnClickListener(new View.OnClickListener(){
+//            public void onClick(View v){
+//                ImageView key = (ImageView) rootView.findViewById(R.id.key);
+//                ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
+//                ImageView question = (ImageView) rootView.findViewById(R.id.question);
+//                ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+//                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+//                door.setBackgroundResource(0);
+//                key.setBackgroundResource(0);
+//                umbrella.setBackgroundResource(0);
+//                question.setBackgroundResource(0);
+//                cloth.setBackgroundResource(0);
+//                money.setBackgroundResource(R.drawable.black);
+//                medicine.setBackgroundResource(0);
+//                itemSelected=4;
+//            }
+//        });
+        rootView.findViewById(R.id.door).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 ImageView key = (ImageView) rootView.findViewById(R.id.key);
                 ImageView umbrella = (ImageView) rootView.findViewById(R.id.umbrella);
                 ImageView question = (ImageView) rootView.findViewById(R.id.question);
                 ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
-                ImageView money = (ImageView) rootView.findViewById(R.id.money);
+//                ImageView money = (ImageView) rootView.findViewById(R.id.money);
                 ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
+                ImageView door = (ImageView) rootView.findViewById(R.id.door);
+                door.setBackgroundResource(R.drawable.black);
                 key.setBackgroundResource(0);
                 umbrella.setBackgroundResource(0);
                 question.setBackgroundResource(0);
                 cloth.setBackgroundResource(0);
-                money.setBackgroundResource(R.drawable.black);
+//                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
-                itemSelected=4;
+                itemSelected=5;
             }
         });
 

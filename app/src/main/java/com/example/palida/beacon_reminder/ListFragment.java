@@ -28,6 +28,11 @@ public class ListFragment extends Fragment {
     public static List<String> install = new ArrayList<String>();
     public static List<String> key = new ArrayList<String>();
     public static List<Boolean> checked = new ArrayList<Boolean>();
+    public static List<String> start_time = new ArrayList<String>();
+    public static List<String> end_time = new ArrayList<String>();
+    public static List<String> repeat = new ArrayList<String>();
+    public static List<String> label = new ArrayList<String>();
+    public static List<Boolean> snooze = new ArrayList<Boolean>();
 
 
     public static List<Item> items = new ArrayList<Item>();
@@ -59,6 +64,43 @@ public class ListFragment extends Fragment {
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
         save.setVisibility(View.INVISIBLE);
+
+
+        if(name.isEmpty()) {
+            name.add("Key");
+            name.add("Medicine");
+            name.add("Umbrella");
+            pic.add(R.drawable.key);
+            pic.add(R.drawable.medicine);
+            pic.add(R.drawable.umbrella);
+            description.add("this is key");
+            description.add("this is medicine");
+            description.add("this is umbrella");
+            install.add("");
+            install.add("");
+            install.add("");
+            key.add("");
+            key.add("");
+            key.add("");
+            checked.add(false);
+            checked.add(false);
+            checked.add(false);
+            start_time.add("");
+            start_time.add("");
+            start_time.add("");
+            end_time.add("");
+            end_time.add("");
+            end_time.add("");
+            repeat.add("Never");
+            repeat.add("Never");
+            repeat.add("Never");
+            label.add("Alarm");
+            label.add("Alarm");
+            label.add("Alarm");
+            snooze.add(false);
+            snooze.add(false);
+            snooze.add(false);
+        }
 
         ListView listView = rootView.findViewById(R.id.listView);
         DBHelper dbHelper = new DBHelper(getActivity());

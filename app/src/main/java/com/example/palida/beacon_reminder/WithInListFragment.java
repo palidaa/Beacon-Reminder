@@ -64,7 +64,11 @@ public class WithInListFragment extends Fragment {
         TextView des = (TextView) rootView.findViewById(R.id.description);
         des.setText("Description: "+queryItem.get(Item.Column.DESCRIPTION));
         TextView install = (TextView) rootView.findViewById(R.id.install_on);
+
         install.setText("Install on: "+queryItem.get(Item.Column.INSTALL));
+
+//        install.setText("Install on: "+ ListFragment.install.get(pos));
+
 
 
         btn_delete.setOnClickListener(new View.OnClickListener(){
