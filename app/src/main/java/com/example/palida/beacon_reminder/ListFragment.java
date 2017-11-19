@@ -85,12 +85,12 @@ public class ListFragment extends Fragment {
             checked.add(false);
             checked.add(false);
             checked.add(false);
+            start_time.add("08:00");
+            start_time.add("08:00");
             start_time.add("");
-            start_time.add("");
-            start_time.add("");
-            end_time.add("");
-            end_time.add("");
-            end_time.add("");
+            end_time.add("08:00");
+            end_time.add("08:00");
+            end_time.add("08:00");
             repeat.add("Never");
             repeat.add("Never");
             repeat.add("Never");

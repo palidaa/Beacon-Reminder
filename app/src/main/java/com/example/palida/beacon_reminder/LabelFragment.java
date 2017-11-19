@@ -34,11 +34,12 @@ public class LabelFragment extends Fragment {
         titleName.setText("Repeat");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("cancel");
+        edit.setVisibility(View.VISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
         search.setBackgroundColor(Color.TRANSPARENT);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("save");
-
+        save.setVisibility(View.VISIBLE);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             pos = bundle.getInt("pos");
@@ -46,7 +47,7 @@ public class LabelFragment extends Fragment {
 
 
         final EditText editLabel  = (EditText) rootView.findViewById(R.id.label);
-        editLabel.setText(ListFragment.label.get(pos));
+        editLabel.setText(WithInAlarmFragment.label1);
 
         getActivity().findViewById(R.id.edit).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -57,7 +58,7 @@ public class LabelFragment extends Fragment {
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 String editL = editLabel.getText().toString();
-                WithInAlarmFragment.label1.set(pos,editL);
+                WithInAlarmFragment.label1=editL;
                 getFragmentManager().popBackStack();
             }
         });

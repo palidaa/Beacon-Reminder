@@ -78,9 +78,9 @@ public class WithInAddFragment extends Fragment {
                 ListFragment.install.add(date);
                 ListFragment.pic.add(picS[itemSelected]);
                 ListFragment.checked.add(false);
-                ListFragment.start_time.add("");
-                ListFragment.end_time.add("");
-                ListFragment.repeat.add("");
+                ListFragment.start_time.add("08:00");
+                ListFragment.end_time.add("08:00");
+                ListFragment.repeat.add("Never");
                 ListFragment.label.add("Alarm");
                 ListFragment.snooze.add(false);
 

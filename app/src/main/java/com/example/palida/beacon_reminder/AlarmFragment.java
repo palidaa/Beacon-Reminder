@@ -53,6 +53,12 @@ public class AlarmFragment extends Fragment {
             MainActivity.l=2;
             MainActivity.i=2;
 
+            WithInAlarmFragment.startTime1 = ListFragment.start_time.get(arg2);
+            WithInAlarmFragment.endTime1 = ListFragment.end_time.get(arg2);
+            WithInAlarmFragment.repeat1 = ListFragment.repeat.get(arg2);
+            WithInAlarmFragment.label1 = ListFragment.label.get(arg2);
+            WithInAlarmFragment.snooze1 = ListFragment.snooze.get(arg2);
+
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             WithInAlarmFragment select1 = new WithInAlarmFragment();
             Bundle bundle = new Bundle();

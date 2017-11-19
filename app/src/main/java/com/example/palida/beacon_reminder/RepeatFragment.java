@@ -35,11 +35,12 @@ public class RepeatFragment extends Fragment {
         titleName.setText("Repeat");
         TextView edit = (TextView) getActivity().findViewById(R.id.edit);
         edit.setText("cancel");
+        edit.setVisibility(View.VISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
         search.setBackgroundColor(Color.TRANSPARENT);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("save");
-
+        save.setVisibility(View.VISIBLE);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             pos = bundle.getInt("pos");
@@ -53,7 +54,7 @@ public class RepeatFragment extends Fragment {
 
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                WithInAlarmFragment.repeat1.set(pos,day[itemSelected]);
+                WithInAlarmFragment.repeat1=day[itemSelected];
                 getFragmentManager().popBackStack();
             }
         });
