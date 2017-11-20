@@ -65,7 +65,7 @@ public class Scanner implements BeaconConsumer {
         // Sets scanning periods.
         beaconManager.setForegroundScanPeriod(Integer.parseInt(preferences.getString("key_scan_period", "1100")));
         // Sets between scanning periods.
-        beaconManager.setForegroundBetweenScanPeriod(Integer.parseInt(preferences.getString("key_between_scan_period", "0")));
+        //beaconManager.setForegroundBetweenScanPeriod(Integer.parseInt(preferences.getString("key_between_scan_period", "0")));
         // Initializing cache and setting tracking age.
         BeaconManager.setUseTrackingCache(true);
         beaconManager.setMaxTrackingAge(Integer.parseInt(preferences.getString("key_tracking_age", "1000")));
@@ -95,7 +95,7 @@ public class Scanner implements BeaconConsumer {
 
     @Override
     public void onBeaconServiceConnect() {
-        beaconManager.setRangeNotifier(new RangeNotifier() {
+        beaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
                 onScanBeaconsCallback.onScanBeacons(collection);

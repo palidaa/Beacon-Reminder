@@ -10,6 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.Region;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,20 +21,19 @@ import java.util.List;
  */
 
 public class CustomAdapterAlarm extends BaseAdapter{
-        Context mContext;
-        private List<String> name;
-        private List<Integer> pic;
-        private List<Boolean> checked;
+    Context mContext;
+    private List<Item> items;
+    private Collection<Beacon> inBeacon;
 
-    public CustomAdapterAlarm(Context context, List<String> name, List<Integer> pic,List<Boolean> checked) {
+    public CustomAdapterAlarm(Context context, List<Item> items,Collection<Beacon> inBeacon) {
         this.mContext= context;
-        this.name = name;
-        this.pic = pic;
-        this.checked = checked;
+        this.items = items;
+        this.inBeacon=inBeacon;
     }
 
+
     public int getCount() {
-        return name.size();
+        return items.size();
     }
 
     public Object getItem(int position) {
@@ -49,20 +52,15 @@ public class CustomAdapterAlarm extends BaseAdapter{
             view = mInflater.inflate(R.layout.singlerow_alarm, parent, false);
 
         TextView textView = (TextView)view.findViewById(R.id.name);
-        textView.setText(name.get(position));
+        textView.setText(items.get(position).getName());
 
         ImageView imageView = (ImageView)view.findViewById(R.id.pic);
-        imageView.setBackgroundResource(pic.get(position));
+        imageView.setBackgroundResource(items.get(position).getPic());
 
         Switch s = (Switch) view.findViewById(R.id.switch1);
-        s.setChecked(checked.get(position));
-
-        s.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ListFragment.checked.set(position,!checked.get(position));
-            }
-        });
+        if(inBeacon!=null && inBeacon.contains(new Beacon.Builder().setId1(items.get(position).getBeacon_uuid()).setId2("0").setId3("0").build())){
+            s.setChecked(true);
+        }else s.setChecked(false);
 
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout);
         if(position%2==1)

@@ -332,20 +332,23 @@ public class AddFragment extends Fragment implements Scanner.OnScanBeaconsListen
 
     private void startScanning() {
         if (!mBeaconManager.checkAvailability()) {
-            checkPermissions();
             verifyBluetooth();
         } else {
+            checkPermissions();
             isScanning = true;
             mBeaconManager.bind(scanner); // Beacon manager binds the beacon consumer and starts service.
+            if (mBeaconManager.isBound(scanner))
+                mBeaconManager.setBackgroundMode(false);
             progressBar.setVisibility(View.VISIBLE);
             btn_scan.setBackgroundResource(R.drawable.ic_menu_item_stop);
-
         }
     }
 
     private void stopScanning() {
         isScanning = false;
 //        beacons.clear();
+        if (mBeaconManager.isBound(scanner))
+            mBeaconManager.setBackgroundMode(true);
         mBeaconManager.unbind(scanner); // Beacon manager unbinds the beacon consumer and stops service.
         progressBar.setVisibility(View.INVISIBLE);
         btn_scan.setBackgroundResource(R.drawable.ic_search_black_24dp);
@@ -363,6 +366,8 @@ public class AddFragment extends Fragment implements Scanner.OnScanBeaconsListen
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mBeaconManager.isBound(scanner))
+            mBeaconManager.setBackgroundMode(true);
     }
 
     public void onStartStopEvent() {

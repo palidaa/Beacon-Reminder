@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Beacon-Reminder.iml" filepath="$PROJECT_DIR$/Beacon-Reminder.iml" />
       <module fileurl="file://D:\work\year4term1\wireless\Beacon_Reminder\Beacon-Reminder.iml" filepath="D:\work\year4term1\wireless\Beacon_Reminder\Beacon-Reminder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Beacon_Reminder.iml" filepath="$PROJECT_DIR$/Beacon_Reminder.iml" />
+      <module fileurl="file://E:\workspace\Beacon-Reminder\Beacon_Reminder.iml" filepath="E:\workspace\Beacon-Reminder\Beacon_Reminder.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

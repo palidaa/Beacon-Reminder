@@ -153,6 +153,32 @@ public class DBHelper extends SQLiteOpenHelper {
         return beaconList;
     }
 
+    public List<Item> getBeaconsFromPicType(int pic) {
+        List<Item> beaconList = new ArrayList<Item>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + Item.TABLE + " WHERE "+Item.Column.PIC+" = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Integer.toString(pic)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Item item = new Item();
+                item.setBeacon_uuid(cursor.getString(0));
+                item.setName(cursor.getString(1));
+                item.setPic(cursor.getInt(2));
+                item.setDescription(cursor.getString(3));
+                item.setInstall(cursor.getString(4));
+                // Adding item to list
+                beaconList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        // return item list
+        return beaconList;
+    }
+
     // Updating single beacon
     public int updateBeacon(Item beaconItem) {
         SQLiteDatabase db = this.getWritableDatabase();

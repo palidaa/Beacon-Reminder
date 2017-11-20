@@ -27,7 +27,7 @@ public class WithInAddFragment extends Fragment {
     String beacon_id;
 // beacon_name;
     int pos;
-    public int itemSelected=5;
+    public int itemSelected=6;
     public static int[] picS = {R.drawable.key,R.drawable.medicine,R.drawable.umbrella,R.drawable.clothes,R.drawable.money,R.drawable.door,R.drawable.question};
     public static String[] nameS = {"key","medicine","umbrella","clothes","money","door","question"};
     public WithInAddFragment() {
@@ -176,7 +176,7 @@ public class WithInAddFragment extends Fragment {
                 cloth.setBackgroundResource(0);
 //                money.setBackgroundResource(0);
                 medicine.setBackgroundResource(0);
-                itemSelected=5;
+                itemSelected=6;
             }
         });
         rootView.findViewById(R.id.cloth).setOnClickListener(new View.OnClickListener(){

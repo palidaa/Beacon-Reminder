@@ -1,6 +1,7 @@
 package com.example.palida.beacon_reminder;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -13,12 +14,23 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
+import com.example.palida.beacon_reminder.altBeacon.Scanner;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AlarmFragment extends Fragment {
     private View rootView;
+    Collection<Beacon> beacons = null;
+    ListView listView;
 
     public AlarmFragment() {
         // Required empty public constructor
@@ -42,8 +54,8 @@ public class AlarmFragment extends Fragment {
         save.setText("");
         save.setVisibility(View.INVISIBLE);
 
-        ListView listView = rootView.findViewById(R.id.listView);
-        final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.name,ListFragment.pic,ListFragment.checked);
+        listView = rootView.findViewById(R.id.listView);
+        CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.items,beacons);
 //        final CustomAdapter adapter =new CustomAdapter(getActivity(), ListFragment.name,ListFragment.pic);
         listView.setAdapter(adapter);
 
@@ -70,8 +82,36 @@ public class AlarmFragment extends Fragment {
             }
         });
 
-
         return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(null);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(null);
+    }
+
+    public void updateList(final Collection<Beacon> aBeacons){
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.items, aBeacons);
+                listView.setAdapter(adapter);
+                beacons=aBeacons;
+            }
+        });
     }
 
 }
