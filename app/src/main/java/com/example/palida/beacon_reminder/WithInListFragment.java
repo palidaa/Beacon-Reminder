@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
+
 import java.util.HashMap;
 
 
@@ -80,6 +82,9 @@ public class WithInListFragment extends Fragment {
                 dbHelper.deleteBeacon((String) queryItem.get(Item.Column.ID));
                 Toast.makeText(getActivity(), "Delete item complete",
                         Toast.LENGTH_LONG).show();
+
+                ((BeaconReferenceApplication)getActivity().getApplicationContext()).updateItemList();
+
                 getFragmentManager().popBackStack();
             }
         });

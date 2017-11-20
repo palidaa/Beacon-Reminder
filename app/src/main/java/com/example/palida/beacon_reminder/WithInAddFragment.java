@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -94,6 +96,8 @@ public class WithInAddFragment extends Fragment {
                 Item itemBeacon = new Item(beacon_id, editN, picS[itemSelected], editD, date, 0, "08:00", "09:00", "Never", "Alarm", 0);
                 dbHelper.addNewBeacon(itemBeacon);
                 Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
+
+                ((BeaconReferenceApplication)getActivity().getApplicationContext()).updateItemList();
 
                 getFragmentManager().popBackStack();
             }
