@@ -30,13 +30,21 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LIST_TABLE = String.format("CREATE TABLE %s " +
-            "(%s TEXT PRIMARY KEY , %s TEXT, %s INTEGER, %s TEXT, %s TEXT)",
+            "(%s TEXT PRIMARY KEY , %s TEXT, %s INTEGER, %s TEXT, %s TEXT ,%s INTEGER,%s TEXT, %s TEXT ,%s TEXT, %s TEXT ,%s INTEGER)",
                 Item.TABLE,
                 Item.Column.ID,
                 Item.Column.NAME,
                 Item.Column.PIC,
                 Item.Column.DESCRIPTION,
-                Item.Column.INSTALL);
+                Item.Column.INSTALL,
+                Item.Column.CHECKED,
+                Item.Column.START_TIME,
+                Item.Column.END_TIME,
+                Item.Column.REPEAT,
+                Item.Column.LABEL,
+                Item.Column.SNOOZE
+        );
+
         Log.i(TAG, CREATE_LIST_TABLE);
         db.execSQL(CREATE_LIST_TABLE);
     }
@@ -91,6 +99,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(Item.Column.DESCRIPTION, beaconItem.getDescription());
         values.put(Item.Column.INSTALL, beaconItem.getInstall());
 
+        values.put(Item.Column.CHECKED, beaconItem.getChecked());
+        values.put(Item.Column.START_TIME, beaconItem.getStart_time());
+        values.put(Item.Column.END_TIME, beaconItem.getEnd_time());
+        values.put(Item.Column.REPEAT, beaconItem.getRepeat());
+        values.put(Item.Column.LABEL, beaconItem.getLabel());
+        values.put(Item.Column.SNOOZE, beaconItem.getSnooze());
+
         // Inserting Row
         db.insert(Item.TABLE, null, values);
         db.close(); // Closing database connection
@@ -109,7 +124,16 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Item.TABLE, new String[] { Item.Column.ID,
-                        Item.Column.NAME, Item.Column.PIC,Item.Column.DESCRIPTION,Item.Column.INSTALL }, Item.Column.ID + "=?",
+                        Item.Column.NAME,
+                        Item.Column.PIC,
+                        Item.Column.DESCRIPTION,
+                        Item.Column.INSTALL,
+                        Item.Column.CHECKED,
+                        Item.Column.START_TIME,
+                        Item.Column.END_TIME,
+                        Item.Column.REPEAT,
+                        Item.Column.LABEL,
+                        Item.Column.SNOOZE}, Item.Column.ID + "=?",
                 new String[] { id }, null, null, null, null);
 
         HashMap resultItem = new HashMap();
@@ -119,6 +143,12 @@ public class DBHelper extends SQLiteOpenHelper {
             resultItem.put(Item.Column.PIC,cursor.getInt(2));
             resultItem.put(Item.Column.DESCRIPTION,cursor.getString(3));
             resultItem.put(Item.Column.INSTALL,cursor.getString(4));
+            resultItem.put(Item.Column.CHECKED,cursor.getInt(5));
+            resultItem.put(Item.Column.START_TIME,cursor.getString(6));
+            resultItem.put(Item.Column.END_TIME,cursor.getString(7));
+            resultItem.put(Item.Column.REPEAT,cursor.getString(8));
+            resultItem.put(Item.Column.LABEL,cursor.getString(9));
+            resultItem.put(Item.Column.SNOOZE,cursor.getInt(10));
         }
         cursor.close();
         db.close();
@@ -144,6 +174,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 item.setPic(cursor.getInt(2));
                 item.setDescription(cursor.getString(3));
                 item.setInstall(cursor.getString(4));
+                item.setChecked(cursor.getInt(5));
+                item.setStart_time(cursor.getString(6));
+                item.setEnd_time(cursor.getString(7));
+                item.setRepeat(cursor.getString(8));
+                item.setLabel(cursor.getString(9));
+                item.setSnooze(cursor.getInt(10));
                 // Adding item to list
                 beaconList.add(item);
             } while (cursor.moveToNext());
@@ -163,6 +199,12 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(Item.Column.PIC, beaconItem.getPic());
         values.put(Item.Column.DESCRIPTION, beaconItem.getDescription());
         values.put(Item.Column.INSTALL, beaconItem.getInstall());
+        values.put(Item.Column.CHECKED, beaconItem.getChecked());
+        values.put(Item.Column.START_TIME, beaconItem.getStart_time());
+        values.put(Item.Column.END_TIME, beaconItem.getEnd_time());
+        values.put(Item.Column.REPEAT, beaconItem.getRepeat());
+        values.put(Item.Column.LABEL, beaconItem.getLabel());
+        values.put(Item.Column.SNOOZE, beaconItem.getSnooze());
 
         // updating row
         return db.update(Item.TABLE, values, Item.Column.ID + " = ?",

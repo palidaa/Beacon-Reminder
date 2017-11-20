@@ -1,7 +1,5 @@
 package com.example.palida.beacon_reminder;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,16 +7,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.palida.beacon_reminder.altBeacon.BeaconAdapter;
-
-import org.altbeacon.beacon.Beacon;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static int i=0,j=0,l=0;

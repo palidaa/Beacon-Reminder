@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,7 +21,10 @@ import android.widget.TextView;
 public class LabelFragment extends Fragment {
     private View rootView;
     int pos;
-
+    String id;
+    DBHelper dbHelper;
+    HashMap queryItem;
+    Item item;
     public LabelFragment() {
         // Required empty public constructor
     }
@@ -42,23 +47,39 @@ public class LabelFragment extends Fragment {
         save.setVisibility(View.VISIBLE);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            pos = bundle.getInt("pos");
+//            pos = bundle.getInt("pos");
+            id = bundle.getString(Item.Column.ID);
         }
+        dbHelper = new DBHelper(getActivity());
+        queryItem = dbHelper.getBeacon(id);
+        item = new Item((String) queryItem.get(Item.Column.ID),
+                (String) queryItem.get(Item.Column.NAME),
+                (int) queryItem.get(Item.Column.PIC),
+                (String) queryItem.get(Item.Column.DESCRIPTION),
+                (String)queryItem.get(Item.Column.INSTALL),
+                (int) queryItem.get(Item.Column.CHECKED),
+                (String)queryItem.get(Item.Column.START_TIME),
+                (String)queryItem.get(Item.Column.END_TIME),
+                (String)queryItem.get(Item.Column.REPEAT),
+                (String)queryItem.get(Item.Column.LABEL),
+                (int)queryItem.get(Item.Column.SNOOZE));
 
 
         final EditText editLabel  = (EditText) rootView.findViewById(R.id.label);
-        editLabel.setText(WithInAlarmFragment.label1);
+        editLabel.setText(item.getLabel());
 
-        getActivity().findViewById(R.id.edit).setOnClickListener(new View.OnClickListener(){
+        edit.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 getFragmentManager().popBackStack();
             }
         });
 
-        getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
+        save.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 String editL = editLabel.getText().toString();
-                WithInAlarmFragment.label1=editL;
+//                WithInAlarmFragment.label1=editL;
+                item.setLabel(editL);
+                dbHelper.updateBeacon(item);
                 getFragmentManager().popBackStack();
             }
         });

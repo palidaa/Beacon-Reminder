@@ -1,6 +1,10 @@
 package com.example.palida.beacon_reminder;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +13,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.palida.beacon_reminder.Helper.AlarmManagers;
+import com.example.palida.beacon_reminder.Helper.AlarmReceiver;
+
+import java.util.Calendar;
 import java.util.List;
+
+import static android.content.Context.ALARM_SERVICE;
 
 /**
  * Created by Palida on 13-Nov-17.
@@ -18,19 +29,16 @@ import java.util.List;
 
 public class CustomAdapterAlarm extends BaseAdapter{
         Context mContext;
-        private List<String> name;
-        private List<Integer> pic;
-        private List<Boolean> checked;
+    private List<Item> items;
 
-    public CustomAdapterAlarm(Context context, List<String> name, List<Integer> pic,List<Boolean> checked) {
+
+    public CustomAdapterAlarm(Context context, List<Item> items) {
         this.mContext= context;
-        this.name = name;
-        this.pic = pic;
-        this.checked = checked;
+        this.items = items;
     }
 
     public int getCount() {
-        return name.size();
+        return items.size();
     }
 
     public Object getItem(int position) {
@@ -49,18 +57,35 @@ public class CustomAdapterAlarm extends BaseAdapter{
             view = mInflater.inflate(R.layout.singlerow_alarm, parent, false);
 
         TextView textView = (TextView)view.findViewById(R.id.name);
-        textView.setText(name.get(position));
+        textView.setText(items.get(position).getName());
 
         ImageView imageView = (ImageView)view.findViewById(R.id.pic);
-        imageView.setBackgroundResource(pic.get(position));
+        imageView.setBackgroundResource(items.get(position).getPic());
 
-        Switch s = (Switch) view.findViewById(R.id.switch1);
-        s.setChecked(checked.get(position));
+        Switch switch_alarm = (Switch) view.findViewById(R.id.switch1);
+        switch_alarm.setChecked(items.get(position).getChecked()==1?true:false);
 
-        s.setOnClickListener(new View.OnClickListener() {
+        switch_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListFragment.checked.set(position,!checked.get(position));
+                items.get(position).setChecked(items.get(position).getChecked()==1?0:1);
+                DBHelper dbHelper = new DBHelper(mContext);
+                dbHelper.updateBeacon(items.get(position));
+
+                AlarmManagers alarmManagers = new AlarmManagers(mContext);
+
+                if(items.get(position).getChecked()==1){
+                    String startTime = items.get(position).getStart_time();
+                    String[] time = startTime.split(":");
+                    int hour = Integer.parseInt(time[0].trim());
+                    int min = Integer.parseInt(time[1].trim());
+                    alarmManagers.setAlarm(mContext,hour,min,position,setRepeatDayOfWeekToInteger(items.get(position).getRepeat()));
+                }
+                else{
+                    alarmManagers.cancelAlarm(mContext,position);
+                }
+                notifyDataSetChanged();
+//                ListFragment.checked.set(position,!checked.get(position));
             }
         });
 
@@ -72,4 +97,21 @@ public class CustomAdapterAlarm extends BaseAdapter{
 
         return view;
     }
+
+    private int setRepeatDayOfWeekToInteger(String repeatDayOfWeek){
+        int dayOfWeek = 0;
+        switch (repeatDayOfWeek){
+            case "Never": dayOfWeek = 0; break;
+            case "Every Sunday": dayOfWeek =  1; break;
+            case "Every Monday": dayOfWeek =  2; break;
+            case "Every Tuesday": dayOfWeek =  3; break;
+            case "Every Wednesday": dayOfWeek =  4; break;
+            case "Every Thursday": dayOfWeek =  5; break;
+            case "Every Friday": dayOfWeek =  6; break;
+            case "Every Saturday": dayOfWeek =  7; break;
+        }
+        return dayOfWeek;
+    }
+
+
 }
