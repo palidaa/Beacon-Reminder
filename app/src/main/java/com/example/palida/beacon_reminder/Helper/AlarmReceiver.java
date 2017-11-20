@@ -7,6 +7,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -37,13 +40,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.icon)
                 .setContentTitle("Alarm actived!")
                 .setContentText("THIS IS LABEL")
-                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.shape_of_you))
+                .setVibrate(new long[] {500,500,500,500,500,500,500,500,500})
                 .setContentInfo("info");
+
 
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1,builder.build());
