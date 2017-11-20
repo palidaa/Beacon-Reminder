@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,10 +19,15 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.palida.beacon_reminder.DBHelper;
+import com.example.palida.beacon_reminder.Item;
 import com.example.palida.beacon_reminder.MainActivity;
 import com.example.palida.beacon_reminder.R;
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -32,32 +38,26 @@ public class AlarmReceiver extends BroadcastReceiver {
     // if go out & reach alarm time &
     @Override
     public void onReceive(Context context, Intent intent) {
-//
-//        Intent i = new Intent(context, MainActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(i);
-//        Log.i(TAG, "onReceive");
-
+        int requestCode = intent.getExtras().getInt("requestCode");
+        Log.i("Alarm", "Alert : "+requestCode);
+        DBHelper dbHelper = new DBHelper(context);
+        List<Item> items = dbHelper.getAllBeacons();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.icon)
-                .setContentTitle("Alarm actived!")
-                .setContentText("THIS IS LABEL")
+                .setContentTitle(items.get(requestCode).getName())
+                .setContentText(items.get(requestCode).getLabel())
                 .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.shape_of_you))
-                .setVibrate(new long[] {500,500,500,500,500,500,500,500,500})
-                .setContentInfo("info");
+                .setVibrate(new long[]{500, 500, 500, 500, 500, 500, 500, 500, 500});
 
-
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1,builder.build());
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
 
         // For our recurring task, we'll just display a message
 //        int requestCode = intent.getExtras().getInt("requestCode");
 //        Log.i("Alarm", "Alert : "+requestCode);
 //        Toast.makeText(context, "Alert : " + requestCode, Toast.LENGTH_SHORT).show();
     }
-
-//
-
 }
