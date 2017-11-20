@@ -118,7 +118,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didDetermineStateForRegion(int state, Region region) {
-        Log.d(TAG, "determenie Sending notification.");
+        Log.d(TAG, "Sending notification.");
         if(state==1){
             this.didEnterRegion(region);
         }
@@ -126,26 +126,33 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     private void leaveHome() {
         String haveBeacons = "";
-        updateItemList();
         checkedItem = new DBHelper(getApplicationContext()).getCheckedBeacon();
         ArrayList<Item> lossItem = new ArrayList<>();
+        ArrayList<Beacon> beaconNear = checkBeaconDistance(beacons);
         for (Item item : checkedItem) {
             if (beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())) {
-                haveBeacons += item.getName() + " ";
+                for(Beacon checkedBeacon : beacons) {
+                    if (beaconNear.contains(checkedBeacon)) {
+                        haveBeacons += item.getName() + " ";
+                    } else {
+                        lossItem.add(item);
+                    }
+                }
             } else {
                 lossItem.add(item);
             }
         }
+
         if(lossItem.size()>0){
             String message = "forget arai mai?";
-            sendNotification(message);
+            sendNotification(message,lossItem);
         }else{
             setSleep();
         }
 
     }
 
-    private void sendNotification(String message){
+    private void sendNotification(String message,List<Item> lossItems){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Beacon Reminder")
@@ -169,7 +176,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         //then alert that he forget them.
         AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
 //        Log.e("Beacon size", " "+ beaconItem.size());
-        alarmHelper.checkInAlarmPeriod(beaconItem);
+        alarmHelper.checkInAlarmPeriod(lossItems);
     }
 
     private void setSleep(){
@@ -233,6 +240,14 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
             }
         }
 
+    }
+
+    public ArrayList<Beacon> checkBeaconDistance(Collection<Beacon> beacons){
+        ArrayList<Beacon> nearItems = new ArrayList<>();
+        for(Beacon beacon:beacons){
+            if(beacon.getDistance() < 0.04) nearItems.add(beacon);
+        }
+        return nearItems;
     }
 
     @Override

@@ -134,7 +134,7 @@ public class AlarmHelper {
 
     private void notification(List<Item> items) {
         int notificationId = 0;
-//        Log.e("AlarmHelper", "Call meennnnnnnnnnnnnn : ");
+        Log.e("AlarmHelper", "Call meennnnnnnnnnnnnn : "+ items.size());
         NotificationCompat.InboxStyle inboxStyle =
                 new NotificationCompat.InboxStyle();
         inboxStyle.setBigContentTitle("You forget : ");
