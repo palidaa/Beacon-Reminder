@@ -44,29 +44,24 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     private ArrayList<Beacon> doorBeacons = new ArrayList<>();
     private ArrayList<Beacon> homeBeacons = new ArrayList<>();
     private boolean isEnterDoorRegion;
+    private boolean isSleep;
     private Collection<Beacon> beacons;
-    private List<Item> allItems;
+    private List<Item> checkedItem;
+    Region region;
 
     public void onCreate() {
         super.onCreate();
         beaconManager = BeaconManager.getInstanceForApplication(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
-        allItems = dbHelper.getAllBeacons();
+        updateItemList();
 
-        List<Item> items = dbHelper.getBeaconsFromPicType(R.drawable.door);
-        for (Item item:items) {
-            doorBeacons.add(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build());
-        }
-        items = dbHelper.getBeaconsFromPicType(R.drawable.question);
-        for (Item item:items) {
-            homeBeacons.add(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build());
-        }
+        isEnterDoorRegion=false;
+        isSleep=false;
 
         Log.d(TAG, "setting up background monitoring for beacons and power saving");
         // wake up the app when a beacon is seen
-        Region region = new Region("backgroundRegion",
+        region = new Region("backgroundRegion",
                 null, null, null);
         regionBootstrap = new RegionBootstrap(this, region);
         // simply constructing this class and holding a reference to it in your custom Application
@@ -78,10 +73,23 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         // If you wish to test beacon detection in the Android Emulator, you can use code like this:
         // BeaconManager.setBeaconSimulator(new TimedBeaconSimulator() );
         // ((TimedBeaconSimulator) BeaconManager.getBeaconSimulator()).createTimedSimulatedBeacons();
-        beaconManager.setBackgroundBetweenScanPeriod(10100);
+        beaconManager.setBackgroundBetweenScanPeriod(7100);
         beaconManager.setForegroundBetweenScanPeriod(1000);
-        beaconManager.setBackgroundScanPeriod(5100);
+        //beaconManager.setBackgroundScanPeriod(5100);
         beaconManager.bind(this);
+    }
+
+    public void updateItemList(){
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+
+        List<Item> items = dbHelper.getBeaconsFromPicType(R.drawable.door);
+        for (Item item:items) {
+            doorBeacons.add(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build());
+        }
+        items = dbHelper.getBeaconsFromPicType(R.drawable.question);
+        for (Item item:items) {
+            homeBeacons.add(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build());
+        }
     }
 
     @Override
@@ -98,11 +106,13 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didExitRegion(Region region) {
-        beacons.clear();
-        try {
-            beaconManager.stopRangingBeaconsInRegion(region);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if(!isEnterDoorRegion) {
+            try {
+                beaconManager.stopRangingBeaconsInRegion(region);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            return;
         }
     }
 
@@ -114,23 +124,32 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         }
     }
 
-    private void sendNotification() {
+    private void leaveHome() {
         String haveBeacons = "";
-        List<Item> beaconItem = new ArrayList<Item>();
-
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
-        allItems = dbHelper.getAllBeacons();
-
-        for (Item item:allItems) {
-            if(beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())){
-                haveBeacons+=item.getName()+" ";
-                beaconItem.add(item);
+        updateItemList();
+        checkedItem = new DBHelper(getApplicationContext()).getCheckedBeacon();
+        ArrayList<Item> lossItem = new ArrayList<>();
+        for (Item item : checkedItem) {
+            if (beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())) {
+                haveBeacons += item.getName() + " ";
+            } else {
+                lossItem.add(item);
             }
         }
+        if(lossItem.size()>0){
+            String message = "forget arai mai?";
+            sendNotification(message);
+        }else{
+            setSleep();
+        }
+
+    }
+
+    private void sendNotification(String message){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setContentTitle("Beacon Reference Application")
-                        .setContentText(haveBeacons)
+                        .setContentTitle("Beacon Reminder")
+                        .setContentText(message)
                         .setSmallIcon(R.drawable.icon   );
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -153,40 +172,67 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         alarmHelper.checkInAlarmPeriod(beaconItem);
     }
 
+    private void setSleep(){
+        isEnterDoorRegion=false;
+        isSleep=true;
+        beaconManager.setBackgroundBetweenScanPeriod(10800000);
+        try {
+            beaconManager.updateScanPeriods();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
         beacons = collection;
-        if(!isEnterDoorRegion && collection.size()==0) {
-            try {
-                beaconManager.stopRangingBeaconsInRegion(region);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
-
-        if(!isEnterDoorRegion){
-            for (Beacon beacon:doorBeacons) {
+        if(isSleep){
+            for (Beacon beacon:homeBeacons) {
                 if(collection.contains(beacon)){
-                    isEnterDoorRegion = true;
+                    beaconManager.setBackgroundBetweenScanPeriod(10100);
+                    try {
+                        beaconManager.updateScanPeriods();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    isSleep = false;
                     return;
                 }
             }
         }else{
-            for (Beacon beacon:doorBeacons) {
-                if(collection.contains(beacon)){
-                    return;
+            if(!isEnterDoorRegion && collection.size()==0) {
+                try {
+                    beaconManager.stopRangingBeaconsInRegion(region);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
+                return;
             }
-            for (Beacon beacon:homeBeacons) {
-                if(collection.contains(beacon)){
-                    isEnterDoorRegion = false;
-                    return;
+
+            if(!isEnterDoorRegion){
+                for (Beacon beacon:doorBeacons) {
+                    if(collection.contains(beacon)){
+                        isEnterDoorRegion = true;
+                        return;
+                    }
                 }
+            }else{
+                for (Beacon beacon:doorBeacons) {
+                    if(collection.contains(beacon)){
+                        return;
+                    }
+                }
+                for (Beacon beacon:homeBeacons) {
+                    if(collection.contains(beacon)){
+                        isEnterDoorRegion = false;
+                        return;
+                    }
+                }
+                Log.d(TAG, "Sending notification.");
+                leaveHome();
             }
-            Log.d(TAG, "call Sending notification.");
-            sendNotification();
         }
+
     }
 
     @Override

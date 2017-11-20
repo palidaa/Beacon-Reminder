@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
+
 import java.util.HashMap;
 
 
@@ -58,6 +60,9 @@ public class WithInListFragment extends Fragment {
         save.setText("");
         save.setVisibility(View.INVISIBLE);
         Button btn_add_alarm = rootView.findViewById(R.id.button);
+        if(queryItem.get(Item.Column.PIC).equals(R.drawable.question) || queryItem.get(Item.Column.PIC).equals(R.drawable.door)){
+            btn_add_alarm.setVisibility(View.INVISIBLE);
+        }
 
 
 
@@ -80,6 +85,9 @@ public class WithInListFragment extends Fragment {
                 dbHelper.deleteBeacon((String) queryItem.get(Item.Column.ID));
                 Toast.makeText(getActivity(), "Delete item complete",
                         Toast.LENGTH_LONG).show();
+
+                ((BeaconReferenceApplication)getActivity().getApplicationContext()).updateItemList();
+
                 getFragmentManager().popBackStack();
             }
         });
