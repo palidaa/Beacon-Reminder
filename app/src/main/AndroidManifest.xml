@@ -14,7 +14,7 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".altBeacon.BeaconReferenceApplication">
+        android:name="com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication">
         android:hardwareAccelerated="false"
         android:largeHeap="true">
         <activity
@@ -26,9 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.example.palida.beacon_reminder.Helper.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true"/>
     </application>
 
 </manifest>

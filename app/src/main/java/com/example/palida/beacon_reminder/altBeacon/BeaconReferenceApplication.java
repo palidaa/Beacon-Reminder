@@ -11,8 +11,10 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.palida.beacon_reminder.DBHelper;
+import com.example.palida.beacon_reminder.Helper.AlarmHelper;
 import com.example.palida.beacon_reminder.Item;
 import com.example.palida.beacon_reminder.MainActivity;
 import com.example.palida.beacon_reminder.R;
@@ -106,7 +108,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didDetermineStateForRegion(int state, Region region) {
-        Log.d(TAG, "Sending notification.");
+        Log.d(TAG, "determenie Sending notification.");
         if(state==1){
             this.didEnterRegion(region);
         }
@@ -114,10 +116,15 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     private void sendNotification() {
         String haveBeacons = "";
+        List<Item> beaconItem = new ArrayList<Item>();
+
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        allItems = dbHelper.getAllBeacons();
 
         for (Item item:allItems) {
             if(beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())){
                 haveBeacons+=item.getName()+" ";
+                beaconItem.add(item);
             }
         }
         NotificationCompat.Builder builder =
@@ -137,6 +144,13 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
+
+        //call alarm's function to check these beacons are in range alarm's period or not.
+        //should call function after you check that these beacons are far from owner
+        //then alert that he forget them.
+        AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
+//        Log.e("Beacon size", " "+ beaconItem.size());
+        alarmHelper.checkInAlarmPeriod(beaconItem);
     }
 
     @Override
@@ -170,7 +184,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                     return;
                 }
             }
-            Log.d(TAG, "Sending notification.");
+            Log.d(TAG, "call Sending notification.");
             sendNotification();
         }
     }

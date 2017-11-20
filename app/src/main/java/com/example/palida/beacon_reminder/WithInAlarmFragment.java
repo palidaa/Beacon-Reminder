@@ -96,7 +96,7 @@ public class WithInAlarmFragment extends Fragment {
 
         btn_save.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                item.setChecked(0);
+                item.setChecked(1);
                 item.setStart_time(startTime1);
                 item.setEnd_time(endTime1);
                 item.setRepeat(repeat1);
