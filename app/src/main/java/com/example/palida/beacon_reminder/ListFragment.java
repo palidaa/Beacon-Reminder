@@ -5,16 +5,20 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -60,7 +64,7 @@ public class ListFragment extends Fragment {
         edit.setVisibility(View.INVISIBLE);
         Button search = (Button) getActivity().findViewById(R.id.search);
         search.setBackgroundResource(R.drawable.ic_search_black_24dp);
-        search.setVisibility(View.INVISIBLE);
+        search.setVisibility(View.VISIBLE);
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
         save.setVisibility(View.INVISIBLE);
@@ -104,9 +108,25 @@ public class ListFragment extends Fragment {
 
         ListView listView = rootView.findViewById(R.id.listView);
         DBHelper dbHelper = new DBHelper(getActivity());
+
+//        String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+//        Item itemBeacon = new Item("0", "key", R.drawable.key, "this is key", date, 0, "08:00", "09:00", "Never", "Alarm", 0);
+//        dbHelper.addNewBeacon(itemBeacon);
+//        Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
+
         items = dbHelper.getAllBeacons();
         final CustomAdapter adapter =new CustomAdapter(getActivity(), items);
         listView.setAdapter(adapter);
+
+        search.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                DBHelper dbHelper = new DBHelper(getActivity());
+                String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+                Item itemBeacon = new Item("0", "key", R.drawable.key, "this is key", date, 0, "08:00", "09:00", "Never", "Alarm", 0);
+                dbHelper.addNewBeacon(itemBeacon);
+                Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
