@@ -25,12 +25,10 @@ import java.util.List;
 public class CustomAdapterAlarm extends BaseAdapter{
     Context mContext;
     private List<Item> items;
-    private Collection<Beacon> inBeacon;
 
-    public CustomAdapterAlarm(Context context, List<Item> items,Collection<Beacon> inBeacon) {
+    public CustomAdapterAlarm(Context context, List<Item> items) {
         this.mContext= context;
         this.items = items;
-        this.inBeacon=inBeacon;
 
     }
 
@@ -61,9 +59,7 @@ public class CustomAdapterAlarm extends BaseAdapter{
         imageView.setBackgroundResource(items.get(position).getPic());
 
         Switch switch_alarm = (Switch) view.findViewById(R.id.switch1);
-        if(inBeacon!=null && inBeacon.contains(new Beacon.Builder().setId1(items.get(position).getBeacon_uuid()).setId2("0").setId3("0").build())){
-            switch_alarm.setChecked(true);
-        }else switch_alarm.setChecked(false);
+        switch_alarm.setChecked(items.get(position).getChecked()==1?true:false);
 
         switch_alarm.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,10 +1,8 @@
 package com.example.palida.beacon_reminder;
 
 
-import android.os.AsyncTask;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,14 +12,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
-import com.example.palida.beacon_reminder.altBeacon.Scanner;
-
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +58,7 @@ public class AlarmFragment extends Fragment {
         listView = rootView.findViewById(R.id.listView);
         DBHelper dbHelper = new DBHelper(getActivity());
         items = dbHelper.getAllBeacons();
-        final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items,beacons);
+        final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items);
 //        final CustomAdapter adapter =new CustomAdapter(getActivity(), ListFragment.name,ListFragment.pic);
         listView.setAdapter(adapter);
 
@@ -96,34 +89,6 @@ public class AlarmFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(null);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((BeaconReferenceApplication) getActivity().getApplicationContext()).setAlarmFragment(null);
-    }
-
-    public void updateList(final Collection<Beacon> aBeacons){
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items, aBeacons);
-                listView.setAdapter(adapter);
-                beacons=aBeacons;
-            }
-        });
     }
 
 }

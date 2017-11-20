@@ -1,6 +1,5 @@
 package com.example.palida.beacon_reminder.altBeacon;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,12 +9,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.palida.beacon_reminder.AlarmFragment;
 import com.example.palida.beacon_reminder.DBHelper;
 import com.example.palida.beacon_reminder.Item;
 import com.example.palida.beacon_reminder.MainActivity;
@@ -23,21 +19,15 @@ import com.example.palida.beacon_reminder.R;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconData;
-import org.altbeacon.beacon.BeaconDataNotifier;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
-import org.altbeacon.beacon.client.DataProviderException;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -47,13 +37,13 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     private static final String TAG = "BeaconReferenceApp";
     private RegionBootstrap regionBootstrap;
     private BackgroundPowerSaver backgroundPowerSaver;
-    private boolean haveDetectedBeaconsSinceBoot = false;
-    private AlarmFragment alarmFragment = null;
     BeaconManager beaconManager;
     private SharedPreferences preferences;
     private ArrayList<Beacon> doorBeacons = new ArrayList<>();
     private ArrayList<Beacon> homeBeacons = new ArrayList<>();
     private boolean isEnterDoorRegion;
+    private Collection<Beacon> beacons;
+    private List<Item> allItems;
 
     public void onCreate() {
         super.onCreate();
@@ -61,6 +51,8 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         DBHelper dbHelper = new DBHelper(getApplicationContext());
+        allItems = dbHelper.getAllBeacons();
+
         List<Item> items = dbHelper.getBeaconsFromPicType(R.drawable.door);
         for (Item item:items) {
             doorBeacons.add(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build());
@@ -104,9 +96,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didExitRegion(Region region) {
-        if (alarmFragment != null) {
-            alarmFragment.updateList(null);
-        }
+        beacons.clear();
         try {
             beaconManager.stopRangingBeaconsInRegion(region);
         } catch (RemoteException e) {
@@ -123,10 +113,17 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     }
 
     private void sendNotification() {
+        String haveBeacons = "";
+
+        for (Item item:allItems) {
+            if(beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())){
+                haveBeacons+=item.getName()+" ";
+            }
+        }
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Beacon Reference Application")
-                        .setContentText("asd")
+                        .setContentText(haveBeacons)
                         .setSmallIcon(R.drawable.icon   );
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -142,13 +139,9 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         notificationManager.notify(1, builder.build());
     }
 
-    public void setAlarmFragment(AlarmFragment alarmFragment) {
-        this.alarmFragment = alarmFragment;
-    }
-
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-        if(alarmFragment!=null) alarmFragment.updateList(collection);
+        beacons = collection;
         if(!isEnterDoorRegion && collection.size()==0) {
             try {
                 beaconManager.stopRangingBeaconsInRegion(region);
