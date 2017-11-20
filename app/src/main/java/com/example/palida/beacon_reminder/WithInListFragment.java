@@ -23,6 +23,8 @@ public class WithInListFragment extends Fragment {
     private View rootView;
 //    int pos;
     String id;
+    DBHelper dbHelper;
+    HashMap queryItem;
 
     public WithInListFragment() {
         // Required empty public constructor
@@ -34,14 +36,15 @@ public class WithInListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_with_in_list, container, false);
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
 //            pos = bundle.getInt("posL");
             id = bundle.getString(Item.Column.ID);
         }
 
-        final DBHelper dbHelper = new DBHelper(getActivity());
-        final HashMap queryItem = dbHelper.getBeacon(id);
+        dbHelper = new DBHelper(getActivity());
+        queryItem = dbHelper.getBeacon(id);
 
         TextView titleName = (TextView) getActivity().findViewById(R.id.toolbar_title);
         titleName.setText("");
@@ -54,6 +57,7 @@ public class WithInListFragment extends Fragment {
         TextView save = (TextView) getActivity().findViewById(R.id.save);
         save.setText("");
         save.setVisibility(View.INVISIBLE);
+        Button btn_add_alarm = rootView.findViewById(R.id.button);
 
 
 
@@ -84,6 +88,18 @@ public class WithInListFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 EditFragment select1 = new EditFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Item.Column.ID, (String) queryItem.get(Item.Column.ID));
+                select1.setArguments(bundle);
+                transaction.replace(R.id.frame, select1);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+        btn_add_alarm.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                WithInAlarmFragment select1 = new WithInAlarmFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(Item.Column.ID, (String) queryItem.get(Item.Column.ID));
                 select1.setArguments(bundle);

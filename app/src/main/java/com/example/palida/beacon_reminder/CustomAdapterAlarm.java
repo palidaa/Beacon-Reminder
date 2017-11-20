@@ -1,6 +1,10 @@
 package com.example.palida.beacon_reminder;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.Region;
-
 import java.util.Collection;
+import com.example.palida.beacon_reminder.Helper.AlarmManagers;
 import java.util.List;
 
 /**
@@ -29,6 +31,7 @@ public class CustomAdapterAlarm extends BaseAdapter{
         this.mContext= context;
         this.items = items;
         this.inBeacon=inBeacon;
+
     }
 
 
@@ -57,10 +60,34 @@ public class CustomAdapterAlarm extends BaseAdapter{
         ImageView imageView = (ImageView)view.findViewById(R.id.pic);
         imageView.setBackgroundResource(items.get(position).getPic());
 
-        Switch s = (Switch) view.findViewById(R.id.switch1);
+        Switch switch_alarm = (Switch) view.findViewById(R.id.switch1);
         if(inBeacon!=null && inBeacon.contains(new Beacon.Builder().setId1(items.get(position).getBeacon_uuid()).setId2("0").setId3("0").build())){
-            s.setChecked(true);
-        }else s.setChecked(false);
+            switch_alarm.setChecked(true);
+        }else switch_alarm.setChecked(false);
+
+        switch_alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                items.get(position).setChecked(items.get(position).getChecked()==1?0:1);
+                DBHelper dbHelper = new DBHelper(mContext);
+                dbHelper.updateBeacon(items.get(position));
+
+                AlarmManagers alarmManagers = new AlarmManagers(mContext);
+
+                if(items.get(position).getChecked()==1){
+                    String startTime = items.get(position).getStart_time();
+                    String[] time = startTime.split(":");
+                    int hour = Integer.parseInt(time[0].trim());
+                    int min = Integer.parseInt(time[1].trim());
+                    alarmManagers.setAlarm(mContext,hour,min,position,setRepeatDayOfWeekToInteger(items.get(position).getRepeat()));
+                }
+                else{
+                    alarmManagers.cancelAlarm(mContext,position);
+                }
+                notifyDataSetChanged();
+//                ListFragment.checked.set(position,!checked.get(position));
+            }
+        });
 
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout);
         if(position%2==1)
@@ -70,4 +97,21 @@ public class CustomAdapterAlarm extends BaseAdapter{
 
         return view;
     }
+
+    private int setRepeatDayOfWeekToInteger(String repeatDayOfWeek){
+        int dayOfWeek = 0;
+        switch (repeatDayOfWeek){
+            case "Never": dayOfWeek = 0; break;
+            case "Every Sunday": dayOfWeek =  1; break;
+            case "Every Monday": dayOfWeek =  2; break;
+            case "Every Tuesday": dayOfWeek =  3; break;
+            case "Every Wednesday": dayOfWeek =  4; break;
+            case "Every Thursday": dayOfWeek =  5; break;
+            case "Every Friday": dayOfWeek =  6; break;
+            case "Every Saturday": dayOfWeek =  7; break;
+        }
+        return dayOfWeek;
+    }
+
+
 }

@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -62,8 +64,8 @@ public class WithInAddFragment extends Fragment {
 //        editName.setText(beacon_name.equalsIgnoreCase("unknown")?"":beacon_name);
         editName.setText("");
         editDes.setText("");
-        Date currentTime = Calendar.getInstance().getTime();
-        final String date = "Date : "+currentTime.getDate() +"/" + currentTime.getMonth() + "/2017";
+//        Date currentTime = Calendar.getInstance().getTime();
+////        final String date = "Date : "+currentTime.getDate() +"/" + currentTime.getMonth() + "/2017";
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
 
@@ -72,23 +74,24 @@ public class WithInAddFragment extends Fragment {
 
                 String editN = editName.getText().toString();
                 String editD = editDes.getText().toString();
-
-                ListFragment.name.add(editN);
-                ListFragment.description.add(editD);
-                ListFragment.install.add(date);
-                ListFragment.pic.add(picS[itemSelected]);
-                ListFragment.checked.add(false);
-                ListFragment.start_time.add("08:00");
-                ListFragment.end_time.add("08:00");
-                ListFragment.repeat.add("Never");
-                ListFragment.label.add("Alarm");
-                ListFragment.snooze.add(false);
+//
+//                ListFragment.name.add(editN);
+//                ListFragment.description.add(editD);
+//                ListFragment.install.add(date);
+//                ListFragment.pic.add(picS[itemSelected]);
+//                ListFragment.checked.add(false);
+//                ListFragment.start_time.add("08:00");
+//                ListFragment.end_time.add("08:00");
+//                ListFragment.repeat.add("Never");
+//                ListFragment.label.add("Alarm");
+//                ListFragment.snooze.add(false);
 
 
 //                something about keyyyyyyy vvvvvv
 //                ListFragment.key.add(AddFragment.name.get(pos));
+                String date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
                 DBHelper dbHelper = new DBHelper(getActivity());
-                Item itemBeacon = new Item(beacon_id, editN, picS[itemSelected], editD, date);
+                Item itemBeacon = new Item(beacon_id, editN, picS[itemSelected], editD, date, 0, "08:00", "09:00", "Never", "Alarm", 0);
                 dbHelper.addNewBeacon(itemBeacon);
                 Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
 

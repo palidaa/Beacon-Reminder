@@ -2,6 +2,9 @@ package com.example.palida.beacon_reminder;
 
 
 import android.os.AsyncTask;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +25,7 @@ import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -31,6 +35,10 @@ public class AlarmFragment extends Fragment {
     private View rootView;
     Collection<Beacon> beacons = null;
     ListView listView;
+    public static List<Item> items = new ArrayList<Item>();
+
+    AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     public AlarmFragment() {
         // Required empty public constructor
@@ -55,36 +63,40 @@ public class AlarmFragment extends Fragment {
         save.setVisibility(View.INVISIBLE);
 
         listView = rootView.findViewById(R.id.listView);
-        CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.items,beacons);
+        DBHelper dbHelper = new DBHelper(getActivity());
+        items = dbHelper.getAllBeacons();
+        final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items,beacons);
 //        final CustomAdapter adapter =new CustomAdapter(getActivity(), ListFragment.name,ListFragment.pic);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-            MainActivity.l=2;
-            MainActivity.i=2;
+                MainActivity.l = 2;
+                MainActivity.i = 2;
 
-            WithInAlarmFragment.startTime1 = ListFragment.start_time.get(arg2);
-            WithInAlarmFragment.endTime1 = ListFragment.end_time.get(arg2);
-            WithInAlarmFragment.repeat1 = ListFragment.repeat.get(arg2);
-            WithInAlarmFragment.label1 = ListFragment.label.get(arg2);
-            WithInAlarmFragment.snooze1 = ListFragment.snooze.get(arg2);
+//            WithInAlarmFragment.startTime1 = ListFragment.start_time.get(arg2);
+//            WithInAlarmFragment.endTime1 = ListFragment.end_time.get(arg2);
+//            WithInAlarmFragment.repeat1 = ListFragment.repeat.get(arg2);
+//            WithInAlarmFragment.label1 = ListFragment.label.get(arg2);
+//            WithInAlarmFragment.snooze1 = ListFragment.snooze.get(arg2);
 
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            WithInAlarmFragment select1 = new WithInAlarmFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt("pos", arg2);
-            select1.setArguments(bundle);
-            transaction.replace(R.id.frame, select1);
-            transaction.addToBackStack(null);
-            transaction.commit();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                WithInAlarmFragment select1 = new WithInAlarmFragment();
+                Bundle bundle = new Bundle();
+//            bundle.putInt("pos", arg2);
+                bundle.putString(Item.Column.ID, items.get(arg2).getBeacon_uuid());
+
+                select1.setArguments(bundle);
+                items.clear();
+                transaction.replace(R.id.frame, select1);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
         return rootView;
     }
-
 
     @Override
     public void onResume() {
@@ -107,7 +119,7 @@ public class AlarmFragment extends Fragment {
     public void updateList(final Collection<Beacon> aBeacons){
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), ListFragment.items, aBeacons);
+                CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items, aBeacons);
                 listView.setAdapter(adapter);
                 beacons=aBeacons;
             }

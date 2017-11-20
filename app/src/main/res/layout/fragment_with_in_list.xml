@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg"
+    android:background="@color/fragment_bg"
     tools:context="com.example.palida.beacon_reminder.WithInListFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -23,6 +23,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp" />
 
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:text="TextView"
-                android:textColor="@color/tool"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
             <TextView
@@ -47,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="TextView"
-                android:textColor="@color/tool"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
             <TextView
@@ -57,7 +59,7 @@
                 android:layout_marginBottom="25dp"
                 android:layout_marginTop="20dp"
                 android:text="TextView"
-                android:textColor="@color/tool"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -67,6 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="25dp"
-            android:text="Add Alarm" />
+            android:text="Add Alarm"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 </FrameLayout>

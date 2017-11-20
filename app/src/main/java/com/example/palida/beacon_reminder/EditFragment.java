@@ -68,15 +68,15 @@ public class EditFragment extends Fragment {
         ImageView cloth = (ImageView) rootView.findViewById(R.id.cloth);
 //        ImageView money = (ImageView) rootView.findViewById(R.id.money);
         ImageView medicine = (ImageView) rootView.findViewById(R.id.medicine);
-
         ImageView door = (ImageView) rootView.findViewById(R.id.door);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[0]) key.setBackgroundResource(R.drawable.black);;
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[1]) medicine.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[2]) umbrella.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[3]) cloth.setBackgroundResource(R.drawable.black);
-//        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[4]) money.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[5]) door.setBackgroundResource(R.drawable.black);
-        if(ListFragment.pic.get(pos)==WithInAddFragment.picS[6]) question.setBackgroundResource(R.drawable.black);
+
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[0]) key.setBackgroundResource(R.drawable.black);;
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[1]) medicine.setBackgroundResource(R.drawable.black);
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[2]) umbrella.setBackgroundResource(R.drawable.black);
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[3]) cloth.setBackgroundResource(R.drawable.black);
+//        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[4]) money.setBackgroundResource(R.drawable.black);
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[5]) door.setBackgroundResource(R.drawable.black);
+        if((int)queryItem.get(Item.Column.PIC)==WithInAddFragment.picS[6]) question.setBackgroundResource(R.drawable.black);
 
 
         final EditText editName  = (EditText) rootView.findViewById(R.id.name);
@@ -94,11 +94,19 @@ public class EditFragment extends Fragment {
 
                 String editN = editName.getText().toString();
                 String editD = editDes.getText().toString();
-                Item item = new Item((String) queryItem.get(Item.Column.ID), editN, picS[itemSelected],editD,(String)queryItem.get(Item.Column.INSTALL));
+                Item item = new Item((String) queryItem.get(Item.Column.ID), editN,
+                        picS[itemSelected],editD,
+                        (String)queryItem.get(Item.Column.INSTALL),
+                        (int) queryItem.get(Item.Column.CHECKED),
+                        (String)queryItem.get(Item.Column.START_TIME),
+                        (String)queryItem.get(Item.Column.END_TIME),
+                        (String)queryItem.get(Item.Column.REPEAT),
+                        (String)queryItem.get(Item.Column.LABEL),
+                        (int)queryItem.get(Item.Column.SNOOZE));
                 dbHelper.updateBeacon(item);
-                ListFragment.name.set(pos, editN);
-                ListFragment.description.set(pos,editD);
-                ListFragment.pic.set(pos,WithInAddFragment.picS[itemSelected]);
+//                ListFragment.name.set(pos, editN);
+//                ListFragment.description.set(pos,editD);
+//                ListFragment.pic.set(pos,WithInAddFragment.picS[itemSelected]);
                 getFragmentManager().popBackStack();
             }
         });

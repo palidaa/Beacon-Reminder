@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +20,10 @@ import android.widget.TextView;
 public class RepeatFragment extends Fragment {
     private View rootView;
     int pos;
+    String id;
+    DBHelper dbHelper;
+    HashMap queryItem;
+    Item item;
     int itemSelected = 0;
     String []day= {"Never","Every Sunday","Every Monday","Every Tuesday","Every Wednesday","Every Thursday","Every Friday","Every Saturday"};
 
@@ -43,8 +49,23 @@ public class RepeatFragment extends Fragment {
         save.setVisibility(View.VISIBLE);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            pos = bundle.getInt("pos");
+//            pos = bundle.getInt("pos");
+            id = bundle.getString(Item.Column.ID);
         }
+
+        dbHelper = new DBHelper(getActivity());
+        queryItem = dbHelper.getBeacon(id);
+        item = new Item((String) queryItem.get(Item.Column.ID),
+                (String) queryItem.get(Item.Column.NAME),
+                (int) queryItem.get(Item.Column.PIC),
+                (String) queryItem.get(Item.Column.DESCRIPTION),
+                (String)queryItem.get(Item.Column.INSTALL),
+                (int) queryItem.get(Item.Column.CHECKED),
+                (String)queryItem.get(Item.Column.START_TIME),
+                (String)queryItem.get(Item.Column.END_TIME),
+                (String)queryItem.get(Item.Column.REPEAT),
+                (String)queryItem.get(Item.Column.LABEL),
+                (int)queryItem.get(Item.Column.SNOOZE));
 
         getActivity().findViewById(R.id.edit).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -54,7 +75,9 @@ public class RepeatFragment extends Fragment {
 
         getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                WithInAlarmFragment.repeat1=day[itemSelected];
+                item.setRepeat(day[itemSelected]);
+                dbHelper.updateBeacon(item);
+//                WithInAlarmFragment.repeat1=day[itemSelected];
                 getFragmentManager().popBackStack();
             }
         });
