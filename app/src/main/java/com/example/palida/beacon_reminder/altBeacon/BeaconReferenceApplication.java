@@ -44,7 +44,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     private boolean isEnterDoorRegion;
     private boolean isSleep;
     private Collection<Beacon> beacons;
-    private List<Item> allItems;
+    private List<Item> checkedItem;
     Region region;
 
     public void onCreate() {
@@ -71,7 +71,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         // If you wish to test beacon detection in the Android Emulator, you can use code like this:
         // BeaconManager.setBeaconSimulator(new TimedBeaconSimulator() );
         // ((TimedBeaconSimulator) BeaconManager.getBeaconSimulator()).createTimedSimulatedBeacons();
-        beaconManager.setBackgroundBetweenScanPeriod(10100);
+        beaconManager.setBackgroundBetweenScanPeriod(7100);
         beaconManager.setForegroundBetweenScanPeriod(1000);
         //beaconManager.setBackgroundScanPeriod(5100);
         beaconManager.bind(this);
@@ -79,7 +79,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     public void updateItemList(){
         DBHelper dbHelper = new DBHelper(getApplicationContext());
-        allItems = dbHelper.getAllBeacons();
 
         List<Item> items = dbHelper.getBeaconsFromPicType(R.drawable.door);
         for (Item item:items) {
@@ -105,11 +104,13 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didExitRegion(Region region) {
-        beacons.clear();
-        try {
-            beaconManager.stopRangingBeaconsInRegion(region);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if(!isEnterDoorRegion) {
+            try {
+                beaconManager.stopRangingBeaconsInRegion(region);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            return;
         }
     }
 
@@ -121,18 +122,31 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         }
     }
 
-    private void sendNotification() {
+    private void leaveHome() {
         String haveBeacons = "";
-
-        for (Item item:allItems) {
-            if(beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())){
-                haveBeacons+=item.getName()+" ";
+        checkedItem = new DBHelper(getApplicationContext()).getCheckedBeacon();
+        ArrayList<Item> lossItem = new ArrayList<>();
+        for (Item item : checkedItem) {
+            if (beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())) {
+                haveBeacons += item.getName() + " ";
+            } else {
+                lossItem.add(item);
             }
         }
+        if(lossItem.size()>0){
+            String message = "forget arai mai?";
+            sendNotification(message);
+        }else{
+            setSleep();
+        }
+
+    }
+
+    private void sendNotification(String message){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setContentTitle("Beacon Reference Application")
-                        .setContentText(haveBeacons)
+                        .setContentTitle("Beacon Reminder")
+                        .setContentText(message)
                         .setSmallIcon(R.drawable.icon   );
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -146,7 +160,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
-        setSleep();
     }
 
     private void setSleep(){
@@ -206,7 +219,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                     }
                 }
                 Log.d(TAG, "Sending notification.");
-                sendNotification();
+                leaveHome();
             }
         }
 

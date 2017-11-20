@@ -9,7 +9,10 @@ import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private final String TAG = getClass().getSimpleName();
     private SQLiteDatabase sqLiteDatabase;
+    String []day= {"Never","Every Sunday","Every Monday","Every Tuesday","Every Wednesday","Every Thursday","Every Friday","Every Saturday"};
 
 
     public DBHelper(Context context) {
@@ -189,6 +193,40 @@ public class DBHelper extends SQLiteOpenHelper {
         return beaconList;
     }
 
+    public List<Item> getAllBeaconsAlarm() {
+        List<Item> beaconList = new ArrayList<Item>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + Item.TABLE + " WHERE " +Item.Column.PIC+" not in (?,?)";
+
+        String[] vauleQuery = {Integer.toString(R.drawable.door),Integer.toString(R.drawable.question)};
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, vauleQuery);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Item item = new Item();
+                item.setBeacon_uuid(cursor.getString(0));
+                item.setName(cursor.getString(1));
+                item.setPic(cursor.getInt(2));
+                item.setDescription(cursor.getString(3));
+                item.setInstall(cursor.getString(4));
+                item.setChecked(cursor.getInt(5));
+                item.setStart_time(cursor.getString(6));
+                item.setEnd_time(cursor.getString(7));
+                item.setRepeat(cursor.getString(8));
+                item.setLabel(cursor.getString(9));
+                item.setSnooze(cursor.getInt(10));
+                // Adding item to list
+                beaconList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        // return item list
+        return beaconList;
+    }
+
     public List<Item> getBeaconsFromPicType(int pic) {
         List<Item> beaconList = new ArrayList<Item>();
         // Select All Query
@@ -206,6 +244,54 @@ public class DBHelper extends SQLiteOpenHelper {
                 item.setPic(cursor.getInt(2));
                 item.setDescription(cursor.getString(3));
                 item.setInstall(cursor.getString(4));
+                item.setChecked(cursor.getInt(5));
+                item.setStart_time(cursor.getString(6));
+                item.setEnd_time(cursor.getString(7));
+                item.setRepeat(cursor.getString(8));
+                item.setLabel(cursor.getString(9));
+                item.setSnooze(cursor.getInt(10));
+                // Adding item to list
+                beaconList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        // return item list
+        return beaconList;
+    }
+
+    public List<Item> getCheckedBeacon() {
+        List<Item> beaconList = new ArrayList<Item>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + Item.TABLE + " WHERE "+Item.Column.CHECKED+" = ? and "
+                +Item.Column.START_TIME+" <= ? and "+Item.Column.END_TIME+" >= ? and "
+                +Item.Column.PIC+" not in (?,?) and ("+Item.Column.REPEAT+" = ? or "+Item.Column.REPEAT+" = ? )";
+        Calendar c = Calendar.getInstance();
+        String time = "";
+        if(c.get(Calendar.HOUR_OF_DAY)<10) time += "0"+c.get(Calendar.HOUR_OF_DAY);
+        else time += Integer.toString(c.get(Calendar.HOUR_OF_DAY));
+        if(c.get(Calendar.MINUTE)<10) time += ":0"+c.get(Calendar.MINUTE);
+        else time += ":"+Integer.toString(c.get(Calendar.MINUTE));
+
+        String[] vauleQuery = {"1",time,time,Integer.toString(R.drawable.door),Integer.toString(R.drawable.question),day[c.get(Calendar.DAY_OF_WEEK)],day[0]};
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, vauleQuery);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Item item = new Item();
+                item.setBeacon_uuid(cursor.getString(0));
+                item.setName(cursor.getString(1));
+                item.setPic(cursor.getInt(2));
+                item.setDescription(cursor.getString(3));
+                item.setInstall(cursor.getString(4));
+                item.setChecked(cursor.getInt(5));
+                item.setStart_time(cursor.getString(6));
+                item.setEnd_time(cursor.getString(7));
+                item.setRepeat(cursor.getString(8));
+                item.setLabel(cursor.getString(9));
+                item.setSnooze(cursor.getInt(10));
                 // Adding item to list
                 beaconList.add(item);
             } while (cursor.moveToNext());

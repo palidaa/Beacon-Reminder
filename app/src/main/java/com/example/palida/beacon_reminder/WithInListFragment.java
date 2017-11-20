@@ -60,6 +60,9 @@ public class WithInListFragment extends Fragment {
         save.setText("");
         save.setVisibility(View.INVISIBLE);
         Button btn_add_alarm = rootView.findViewById(R.id.button);
+        if(queryItem.get(Item.Column.PIC).equals(R.drawable.question) || queryItem.get(Item.Column.PIC).equals(R.drawable.door)){
+            btn_add_alarm.setVisibility(View.INVISIBLE);
+        }
 
 
 

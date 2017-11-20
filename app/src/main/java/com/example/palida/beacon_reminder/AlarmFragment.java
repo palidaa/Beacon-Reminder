@@ -57,7 +57,7 @@ public class AlarmFragment extends Fragment {
 
         listView = rootView.findViewById(R.id.listView);
         DBHelper dbHelper = new DBHelper(getActivity());
-        items = dbHelper.getAllBeacons();
+        items = dbHelper.getAllBeaconsAlarm();
         final CustomAdapterAlarm adapter = new CustomAdapterAlarm(getActivity(), items);
 //        final CustomAdapter adapter =new CustomAdapter(getActivity(), ListFragment.name,ListFragment.pic);
         listView.setAdapter(adapter);
