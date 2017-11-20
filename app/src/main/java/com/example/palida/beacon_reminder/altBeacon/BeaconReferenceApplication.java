@@ -11,7 +11,6 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.palida.beacon_reminder.DBHelper;
 import com.example.palida.beacon_reminder.Helper.AlarmHelper;
@@ -142,17 +141,18 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 lossItem.add(item);
             }
         }
+        Log.e("Lost" , "----------------------------------------------");
 
         if(lossItem.size()>0){
             String message = "forget arai mai?";
-            sendNotification(message,lossItem);
+            sendNotification(message, lossItem);
         }else{
             setSleep();
         }
 
     }
 
-    private void sendNotification(String message,List<Item> lossItems){
+    private void sendNotification(String message, List<Item> lossItems){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Beacon Reminder")
@@ -171,9 +171,6 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
 
-        //call alarm's function to check these beacons are in range alarm's period or not.
-        //should call function after you check that these beacons are far from owner
-        //then alert that he forget them.
         AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
 //        Log.e("Beacon size", " "+ beaconItem.size());
         alarmHelper.checkInAlarmPeriod(lossItems);
@@ -245,7 +242,8 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public ArrayList<Beacon> checkBeaconDistance(Collection<Beacon> beacons){
         ArrayList<Beacon> nearItems = new ArrayList<>();
         for(Beacon beacon:beacons){
-            if(beacon.getDistance() < 0.04) nearItems.add(beacon);
+            if(beacon.getDistance() < 0.01) {nearItems.add(beacon);
+                Log.e("Distance" , beacon.getId1().toString());}
         }
         return nearItems;
     }
