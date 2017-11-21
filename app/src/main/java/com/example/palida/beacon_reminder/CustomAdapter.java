@@ -64,6 +64,7 @@
 package com.example.palida.beacon_reminder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.altbeacon.beacon.Beacon;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -81,10 +85,12 @@ import java.util.List;
 public class CustomAdapter extends BaseAdapter {
     Context mContext;
     private List<Item> items;
+    private Collection<Beacon> beacons;
 
-    public CustomAdapter(Context context, List<Item> items) {
+    public CustomAdapter(Context context, List<Item> items, Collection<Beacon> beacons) {
         this.mContext= context;
         this.items = items;
+        this.beacons=beacons;
 //        this.name = name;
 //        this.pic = pic;
     }
@@ -115,11 +121,14 @@ public class CustomAdapter extends BaseAdapter {
         imageView.setBackgroundResource(items.get(position).getPic());
 
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout);
-        if(position%2==1)
-            layout.setBackgroundColor(mContext.getResources().getColor(R.color.one));
-        else
-            layout.setBackgroundColor(mContext.getResources().getColor(R.color.two));
-
+        if(beacons!=null && beacons.contains(new Beacon.Builder().setId1(items.get(position).getBeacon_uuid()).setId2("0").setId3("0").build())){
+            if (position % 2 == 1)
+                layout.setBackgroundColor(mContext.getResources().getColor(R.color.one));
+            else
+                layout.setBackgroundColor(mContext.getResources().getColor(R.color.two));
+        }else {
+            layout.setBackgroundColor(mContext.getResources().getColor(R.color.beaconInvisible));
+        }
         return view;
     }
 }

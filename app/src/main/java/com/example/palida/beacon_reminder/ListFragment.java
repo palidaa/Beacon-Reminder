@@ -16,8 +16,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.palida.beacon_reminder.altBeacon.BeaconReferenceApplication;
+
+import org.altbeacon.beacon.Beacon;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +45,7 @@ public class ListFragment extends Fragment {
 
 
     public static List<Item> items = new ArrayList<Item>();
+    private Collection<Beacon> beacons = null;
 
     private View rootView;
 
@@ -115,7 +121,7 @@ public class ListFragment extends Fragment {
 //        Log.e("DBBBBBBBB", String.valueOf(dbHelper.getItemList().size()));
 
         items = dbHelper.getAllBeacons();
-        final CustomAdapter adapter =new CustomAdapter(getActivity(), items);
+        final CustomAdapter adapter =new CustomAdapter(getActivity(), items,beacons);
         listView.setAdapter(adapter);
 
         search.setOnClickListener(new View.OnClickListener(){
@@ -150,4 +156,33 @@ public class ListFragment extends Fragment {
         return rootView;
     }
 
+    public void updateList(final Collection<Beacon> haveBeacons){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                beacons=haveBeacons;
+                final CustomAdapter adapter =new CustomAdapter(getActivity(), items,haveBeacons);
+                ListView listView = rootView.findViewById(R.id.listView);
+                listView.setAdapter(adapter);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((BeaconReferenceApplication)getActivity().getApplicationContext()).setListFragment(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((BeaconReferenceApplication)getActivity().getApplicationContext()).setListFragment(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((BeaconReferenceApplication)getActivity().getApplicationContext()).setListFragment(null);
+    }
 }

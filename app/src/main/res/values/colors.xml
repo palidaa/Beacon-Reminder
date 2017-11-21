@@ -12,6 +12,7 @@
     <color name="text">#b47ddc</color>
     <color name="nav">#ffffff</color>
     <color name="bg_alarm">#ffcf81</color>
+    <color name="beaconInvisible">#d8d8d8</color>
 
 
 </resources>

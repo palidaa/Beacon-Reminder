@@ -132,7 +132,8 @@ public class AlarmHelper {
         return dayOfWeek;
     }
 
-    private void notification(List<Item> items) {
+    public void notification(List<Item> items) {
+
         int notificationId = 0;
         Log.e("AlarmHelper", "Call meennnnnnnnnnnnnn : "+ items.size());
         NotificationCompat.InboxStyle inboxStyle =

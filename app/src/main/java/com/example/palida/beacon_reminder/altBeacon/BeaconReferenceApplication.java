@@ -15,6 +15,7 @@ import android.util.Log;
 import com.example.palida.beacon_reminder.DBHelper;
 import com.example.palida.beacon_reminder.Helper.AlarmHelper;
 import com.example.palida.beacon_reminder.Item;
+import com.example.palida.beacon_reminder.ListFragment;
 import com.example.palida.beacon_reminder.MainActivity;
 import com.example.palida.beacon_reminder.R;
 
@@ -44,9 +45,11 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     private ArrayList<Beacon> homeBeacons = new ArrayList<>();
     private boolean isEnterDoorRegion;
     private boolean isSleep;
+    private boolean isNoti;
     private Collection<Beacon> beacons;
     private List<Item> checkedItem;
     Region region;
+    private ListFragment listFragment = null;
 
     public void onCreate() {
         super.onCreate();
@@ -57,6 +60,7 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
         isEnterDoorRegion=false;
         isSleep=false;
+        isNoti=false;
 
         Log.d(TAG, "setting up background monitoring for beacons and power saving");
         // wake up the app when a beacon is seen
@@ -127,16 +131,15 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
         String haveBeacons = "";
         checkedItem = new DBHelper(getApplicationContext()).getCheckedBeacon();
         ArrayList<Item> lossItem = new ArrayList<>();
-        ArrayList<Beacon> beaconNear = checkBeaconDistance(beacons);
+        //ArrayList<Beacon> beaconNear = checkBeaconDistance(beacons);
         for (Item item : checkedItem) {
             if (beacons.contains(new Beacon.Builder().setId1(item.getBeacon_uuid()).setId2("0").setId3("0").build())) {
-                for(Beacon checkedBeacon : beacons) {
-                    if (beaconNear.contains(checkedBeacon)) {
-                        haveBeacons += item.getName() + " ";
-                    } else {
-                        lossItem.add(item);
-                    }
+                if(item.getRepeat().equals("Never")){
+                    item.setChecked(0);
+                    DBHelper dbHelper = new DBHelper(getApplicationContext());
+                    dbHelper.updateBeacon(item);
                 }
+                haveBeacons += item.getName() + " ";
             } else {
                 lossItem.add(item);
             }
@@ -153,27 +156,28 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     }
 
     private void sendNotification(String message, List<Item> lossItems){
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setContentTitle("Beacon Reminder")
-                        .setContentText(message)
-                        .setSmallIcon(R.drawable.icon   );
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntent(new Intent(this, MainActivity.class));
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        builder.setContentIntent(resultPendingIntent);
-        NotificationManager notificationManager =
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, builder.build());
+//        NotificationCompat.Builder builder =
+//                new NotificationCompat.Builder(this)
+//                        .setContentTitle("Beacon Reminder")
+//                        .setContentText(message)
+//                        .setSmallIcon(R.drawable.icon   );
+//
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//        stackBuilder.addNextIntent(new Intent(this, MainActivity.class));
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(
+//                        0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//        builder.setContentIntent(resultPendingIntent);
+//        NotificationManager notificationManager =
+//                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.notify(1, builder.build());
 
         AlarmHelper alarmHelper = new AlarmHelper(getApplicationContext());
 //        Log.e("Beacon size", " "+ beaconItem.size());
-        alarmHelper.checkInAlarmPeriod(lossItems);
+        alarmHelper.notification(lossItems);
+        isNoti=true;
     }
 
     private void setSleep(){
@@ -189,6 +193,9 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
+        if(listFragment!=null) {
+            listFragment.updateList(collection);
+        }
         beacons = collection;
         if(isSleep){
             for (Beacon beacon:homeBeacons) {
@@ -203,15 +210,30 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                     return;
                 }
             }
-        }else{
-            if(!isEnterDoorRegion && collection.size()==0) {
-                try {
-                    beaconManager.stopRangingBeaconsInRegion(region);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+        }else if(isNoti){
+            for (Beacon beacon:homeBeacons) {
+                if(collection.contains(beacon)){
+                    isNoti=false;
+                    isEnterDoorRegion=false;
+                    return;
                 }
-                return;
             }
+            for (Beacon beacon:doorBeacons) {
+                if(collection.contains(beacon)){
+                    isNoti=false;
+                    isEnterDoorRegion=true;
+                    return;
+                }
+            }
+        }else{
+//            if(!isEnterDoorRegion && collection.size()==0) {
+//                try {
+//                    beaconManager.stopRangingBeaconsInRegion(region);
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                }
+//                return;
+//            }
 
             if(!isEnterDoorRegion){
                 for (Beacon beacon:doorBeacons) {
@@ -252,4 +274,9 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier(this);
     }
+
+    public void setListFragment(ListFragment listFragment){
+        this.listFragment=listFragment;
+    }
+
 }
