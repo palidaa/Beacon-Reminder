@@ -210,6 +210,19 @@ public class BeaconReferenceApplication extends Application implements Bootstrap
                     return;
                 }
             }
+            for (Beacon beacon:doorBeacons) {
+                if(collection.contains(beacon)){
+                    beaconManager.setBackgroundBetweenScanPeriod(10100);
+                    try {
+                        beaconManager.updateScanPeriods();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    isEnterDoorRegion = true;
+                    isSleep = false;
+                    return;
+                }
+            }
         }else if(isNoti){
             for (Beacon beacon:homeBeacons) {
                 if(collection.contains(beacon)){
